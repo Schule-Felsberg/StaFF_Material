@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="default">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StaFF Materialkisten — Schule Felsberg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F7E7A8;
+    --paper-2: #F2DD8E;
+    --ink: #2B2A28;
+    --ink-soft: #5C5850;
+    --line: #DCD3BE;
+    --radius: 14px;
+    --shadow: 0 2px 0 rgba(43,42,40,0.06), 0 8px 20px -12px rgba(43,42,40,0.25);
+    /* Startfarben = gleiche Familie wie PRiGS/PRiS (Gold/Navy-Violett) */
+    --accent: #F0B429;
+    --accent-deep: #332F63;
+    --accent-tint: #FBF3DE;
+    --card-bg: #EDBE55;
+  }
+  html[data-theme="PRiK"]{ --accent:#E2762E; --accent-deep:#2B4A66; --accent-tint:#FCECDF; --card-bg:#E2A467; }
+  html[data-theme="PRiGS"]{ --accent:#F0B429; --accent-deep:#332F63; --accent-tint:#FBF3DE; --card-bg:#EDBE55; }
+  html[data-theme="PRiS"]{ --accent:#D89A1E; --accent-deep:#2A2352; --accent-tint:#F5E6C4; --card-bg:#DFAE3E; }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0; background: var(--paper);
+    background-image: radial-gradient(circle at 1px 1px, rgba(43,42,40,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+    color: var(--ink); font-family: 'Karla', sans-serif; line-height: 1.5; padding-bottom: 80px;
+    transition: background-color .2s ease;
+  }
+  .wrap{ max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+  header.top{ padding: 48px 20px 28px; border-bottom: 1px solid var(--line); margin-bottom: 32px; }
+  header.top .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color: var(--accent-deep); margin:0 0 10px; transition: color .2s ease;
+  }
+  header.top h1{ font-family:'Libre Franklin', sans-serif; font-weight:600; font-size: clamp(28px,5vw,40px); margin:0 0 10px; letter-spacing:-0.01em; color: var(--accent-deep); transition: color .2s ease; }
+  header.top p{ color: var(--ink-soft); max-width: 52ch; margin:0; font-size:15.5px; }
+
+  /* Summary chips (ersetzen vorherige Schritte) */
+  .summary-bar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 28px; }
+  .summary-bar.hidden{ display:none; }
+  .chip{
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--accent-tint); border:1px solid var(--accent); color: var(--accent-deep);
+    padding: 7px 8px 7px 14px; border-radius: 999px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+  }
+  .chip button{
+    background: var(--accent); color:white; border:none; border-radius:999px;
+    width:20px; height:20px; cursor:pointer; font-size:12px; line-height:1;
+  }
+
+  .hidden{ display:none !important; }
+
+  .step-label{ font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.1em; text-transform:uppercase; color: var(--ink-soft); margin:0 0 12px; }
+  .choice-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:18px; margin-bottom: 36px; }
+  .choice-grid.triangle{ grid-template-columns: 1fr 1fr; }
+  .choice-grid.triangle .choice-card:nth-child(3){ grid-column: 1 / -1; width: calc((100% - 18px) / 2); margin: 0 auto; }
+  .choice-grid.twocol{ grid-template-columns: 1fr 1fr; }
+  .choice-grid.stufe-grid{ grid-template-columns: 1fr; }
+  .choice-card.stufe-card{ min-height: 110px; font-size: 21px; }
+  @media (max-width: 560px){
+    .choice-grid.triangle{ grid-template-columns: 1fr; }
+    .choice-grid.triangle .choice-card:nth-child(3){ max-width: 100%; }
+    .choice-grid.twocol{ grid-template-columns: 1fr; }
+  }
+  .choice-card{
+    background: var(--card-bg); border:2px solid white; border-radius: var(--radius); padding: 35px 28px; cursor:pointer;
+    text-align:center; font-family:'Libre Franklin', sans-serif; font-size: clamp(26px, 3.3vw, 32px); font-weight:600; min-height: 199px;
+    letter-spacing:-0.005em; color: var(--accent-deep);
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; box-shadow: var(--shadow);
+  }
+  .choice-card:hover{ transform: translateY(-3px); border-color: var(--accent-deep); box-shadow: 0 4px 0 rgba(43,42,40,0.07), 0 16px 30px -16px rgba(43,42,40,0.38); }
+  .choice-card .sub{
+    display:block; margin-top:13px; font-family:'IBM Plex Mono', monospace; font-weight:500; font-size:13px;
+    letter-spacing:.08em; text-transform:uppercase; color: var(--accent-deep); opacity:.6;
+  }
+  .choice-card.klasse-card{ background: #7A76A8; color: white; border-color: white; min-height: 90px; padding: 20px 24px; font-size: 19px; font-weight:600; letter-spacing:normal; }
+  .choice-card.klasse-card .sub{ color: white; opacity:.7; }
+  .choice-card.klasse-card:hover{ border-color: var(--accent); }
+
+  .top-accordion{ border:1px solid var(--line); border-radius: var(--radius); margin-bottom:14px; overflow:hidden; background:white; box-shadow: var(--shadow); }
+  .top-accordion > button.head{
+    width:100%; text-align:left; background: var(--accent-tint); border:none; padding:18px 20px; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    font-family:'Libre Franklin', sans-serif; font-size:20px; font-weight:600; color: var(--ink);
+  }
+  .top-accordion > button.head .chev{ transition: transform .2s ease; color: var(--accent-deep); font-size:16px; }
+  .acc-label{ display:inline-flex; align-items:center; gap:10px; }
+  .acc-icon{ display:inline-flex; color: var(--accent-deep); }
+  .top-accordion.open > button.head .chev{ transform: rotate(90deg); }
+  .top-accordion .body{ display:none; padding:20px; }
+  .top-accordion.open .body{ display:block; }
+
+  .section-title{ font-family:'Libre Franklin', sans-serif; font-size:17px; font-weight:700; color: var(--ink); margin:0 0 14px; }
+  .mini-heading{ font-family:'Karla', sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color: var(--ink-soft); margin:16px 0 6px; }
+  .mat-group{ border-radius:10px; padding:10px 14px 12px; margin-bottom:10px; }
+  .mat-group h4{ margin-top:2px; }
+  .mat-group-material{ background:#F2F6EC; }
+  .mat-group-bring{ background:#FBF3E2; }
+  .mat-group .mat-list > .mat-item{ border-bottom-color: rgba(43,42,40,0.08); }
+  .einheit-tag{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--accent-deep); background: var(--accent-tint); padding:2px 7px; border-radius:999px; margin-left:6px; white-space:nowrap; }
+
+  .copyright-note{ border-left:2px solid var(--line); padding:2px 0 2px 14px; font-size:12.5px; line-height:1.5; color: var(--ink-soft); margin-bottom:16px; }
+  .copyright-note strong{ color: var(--ink-soft); font-weight:600; }
+  .zusatz-list{ list-style:none; margin:0; padding:0; }
+  .zusatz-list li{ font-size:13.5px; color: var(--ink); padding:8px 0; border-bottom:1px dashed var(--line); }
+  .zusatz-list li:last-child{ border-bottom:none; }
+  .zusatz-empty{ font-size:14px; color: var(--ink-soft); text-align:center; padding:10px 0; }
+  .zusatz-tbd{ font-size:13.5px; color: var(--ink-soft); margin:0; }
+  .teams-link{
+    display:inline-flex; align-items:center; gap:8px; background: var(--accent-deep); color:white; text-decoration:none;
+    padding:10px 16px; border-radius:999px; font-weight:600; font-size:14px;
+  }
+  .teams-link:hover{ filter: brightness(1.1); }
+
+  .box-visual{ display:flex; gap:18px; align-items:center; background: var(--accent-tint); border:1px dashed var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  .box-visual.has-photo{ flex-direction:column; align-items:stretch; border-style:solid; }
+  .box-visual.has-photo .cap{ text-align:center; margin-bottom:12px; }
+  .box-photo-row{ display:flex; gap:14px; align-items:start; }
+  .box-photo-row > *{ flex:1; min-width:0; }
+  .box-placeholder-square{ aspect-ratio:1/1; border:1.5px dashed var(--line); border-radius:10px; display:flex; align-items:center; justify-content:center; text-align:center; font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.04em; color: var(--ink-soft); background: rgba(255,255,255,0.5); }
+  .box-photo-wrap img{ display:block; width:100%; border-radius:10px; box-shadow: var(--shadow); }
+  .refl-photo{ margin-bottom:6px; }
+  .refl-photo img{ display:block; width:100%; max-width:200px; margin:0 auto; border-radius:12px; box-shadow: var(--shadow); }
+  img.zoomable{ cursor: zoom-in; }
+  .photo-modal-bg{ position:fixed; inset:0; background: rgba(43,42,40,0.78); display:none; align-items:center; justify-content:center; padding:24px; z-index:60; cursor: zoom-out; }
+  .photo-modal-bg.show{ display:flex; }
+  .photo-modal-bg img{ max-width:92vw; max-height:88vh; border-radius:14px; box-shadow: 0 20px 50px -12px rgba(0,0,0,0.5); cursor:default; }
+  .photo-modal-close{ position:fixed; top:20px; right:24px; background: rgba(255,255,255,0.92); border:none; width:38px; height:38px; border-radius:50%; font-size:17px; cursor:pointer; color: var(--ink); }
+  .refl-photo-cap{ display:block; text-align:center; font-size:12.5px; color: var(--ink-soft); margin-top:8px; }
+  .box-visual .cap{ font-size:13px; color: var(--ink-soft); }
+  .box-visual .cap strong{ display:block; color: var(--ink); font-family:'Libre Franklin', sans-serif; font-size:16px; margin-bottom:4px; }
+
+  details.sublist{ border:1px solid var(--line); border-radius:10px; margin-bottom:12px; background:#FCFAF4; }
+  details.sublist > summary{ cursor:pointer; padding:12px 14px; font-weight:600; font-size:14.5px; list-style:none; display:flex; justify-content:space-between; align-items:center; }
+  details.sublist > summary::-webkit-details-marker{ display:none; }
+  details.sublist > summary::after{ content:'+'; color: var(--accent-deep); font-size:18px; }
+  details.sublist[open] > summary::after{ content:'–'; }
+  details.sublist .inner{ padding: 0 16px 14px; font-size:14px; color: var(--ink-soft); }
+  details.sublist ul{ margin:6px 0 0; padding-left:18px; }
+  details.sublist ul li{ margin-bottom:4px; }
+
+  .unit{ border:1px solid var(--line); border-radius:12px; margin-bottom:10px; overflow:hidden; background:white; }
+  .unit > summary{ list-style:none; cursor:pointer; padding:13px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:600; font-size:15px; }
+  .unit > summary::-webkit-details-marker{ display:none; }
+  .unit .pageref{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--accent-deep); background: var(--accent-tint); padding:3px 8px; border-radius:999px; white-space:nowrap; }
+  .unit .inner{ padding: 4px 16px 16px; }
+  .unit h4{ font-family:'Karla',sans-serif; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color: var(--ink-soft); margin:12px 0 6px; }
+  .obj-list{ display:flex; flex-wrap:wrap; gap:8px; }
+  .obj-chip{ display:inline-flex; align-items:center; gap:6px; background: var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:6px 12px; font-size:13px; cursor:pointer; }
+  .obj-chip:hover{ border-color: var(--accent); }
+  .obj-chip .dot{ width:6px; height:6px; border-radius:50%; background: var(--accent); }
+  .roomlist{ font-size:13.5px; color: var(--ink-soft); }
+  .mat-list{ list-style:none; margin:0; padding:0; }
+  .mat-list > .mat-item{ font-size:13.5px; color: var(--ink); padding:6px 0; border-bottom:1px dashed var(--line); }
+  .mat-list > .mat-item:last-child{ border-bottom:none; }
+  .mat-item .mat-label{ font-weight:600; }
+  .mat-sub{ list-style:none; margin:6px 0 0; padding:0 0 0 18px; border-left:2px solid var(--line); }
+  .mat-sub li{ font-size:13px; color: var(--ink-soft); padding:3px 0 3px 10px; }
+  .mat-sub li.bring-sub{ background:#FBE9E9; border-radius:6px; padding:4px 10px; margin:2px 0; }
+  .mat-sub li.note-sub{ background:#FBE9E9; border-radius:6px; padding:4px 10px; margin:2px 0; }
+  .mat-list > .mat-item.note-bg{ background:#FBE9E9; border-radius:8px; padding:8px 12px; border-bottom:none; margin-bottom:4px; }
+  .mat-item.mat-item-photo{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .mat-item.mat-item-photo .mat-text{ flex:1; min-width:0; }
+  .mat-thumb{ flex-shrink:0; margin-top:-4px; }
+  .mat-thumb img{ display:block; height:68px; width:auto; max-width:96px; border-radius:8px; box-shadow: var(--shadow); }
+  .mat-thumb-pending{ width:68px; height:68px; display:flex; align-items:center; justify-content:center; text-align:center; border:1.5px dashed var(--line); border-radius:8px; font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:.03em; line-height:1.3; color: var(--ink-soft); background: rgba(255,255,255,0.5); }
+  @media (max-width:420px){ .mat-thumb img{ height:56px; max-width:80px; } .mat-thumb-pending{ width:56px; height:56px; font-size:9px; } }
+  .bring-tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    background: var(--accent-tint); color: var(--accent-deep); padding:2px 7px; border-radius:999px;
+    margin-left:4px; white-space:nowrap; vertical-align:middle;
+  }
+  .printed-tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    background:#E4EEDA; color:#3E6B2E; padding:2px 7px; border-radius:999px;
+    margin-left:4px; white-space:nowrap; vertical-align:middle;
+  }
+  .note-tag{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:10.5px;
+    background:#FBE9E9; color:#9B4444; padding:2px 7px; border-radius:999px;
+    margin-left:4px; white-space:nowrap; vertical-align:middle;
+  }
+  .roomlist li{ margin-bottom:3px; }
+
+  .unit.reflexion-unit > summary{ font-style: normal; }
+  .refl-item{ display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .refl-item:last-child{ border-bottom:none; }
+  .refl-item .pageref{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color: var(--accent-deep); background: var(--accent-tint); padding:3px 8px; border-radius:999px; height:fit-content; white-space:nowrap; }
+  .refl-item .txt strong{ display:block; font-family:'Libre Franklin', sans-serif; font-size:15.5px; margin-bottom:2px; }
+  .refl-item .txt span{ font-size:13.5px; color: var(--ink-soft); }
+
+  .modal-bg{ position:fixed; inset:0; background: rgba(43,42,40,0.55); display:none; align-items:center; justify-content:center; padding:24px; z-index:50; }
+  .modal-bg.show{ display:flex; }
+  .modal{ background:white; border-radius:16px; padding:24px; max-width:360px; width:100%; text-align:center; }
+  .modal h3{ font-family:'Libre Franklin', sans-serif; margin:0 0 6px; font-size:19px; }
+  .modal p{ font-size:13.5px; color: var(--ink-soft); margin:0 0 16px; }
+  .modal button{ background: var(--ink); color:white; border:none; padding:9px 18px; border-radius:999px; cursor:pointer; font-weight:600; font-size:13.5px; }
+
+  .placeholder-note{ font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--accent-deep); background: var(--accent-tint); display:inline-block; padding:2px 8px; border-radius:6px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow" id="eyebrow">StaFF · Materialkisten</p>
+    <h1>Was steckt in dieser Kiste?</h1>
+    <p>Materialübersicht zu den einzelnen Kisten und Einheiten</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="summary-bar hidden" id="summaryBar">
+    <span class="chip" id="chipLehrmittel"></span>
+    <span class="chip hidden" id="chipStufe"></span>
+    <span class="chip hidden" id="chipKlasse"></span>
+  </div>
+
+  <!-- SCHRITT 1: Lehrmittel -->
+  <div id="step-lehrmittel">
+    <div class="choice-grid triangle">
+      <button class="choice-card" onclick="selectLehrmittel('PRiK')">PRiK
+        <span class="sub">Kindergarten 1 &amp; 2</span></button>
+      <button class="choice-card" onclick="selectLehrmittel('PRiGS')">PRiGS
+        <span class="sub">1.–4. Klasse</span></button>
+      <button class="choice-card" onclick="selectLehrmittel('PRiS')">PRiS
+        <span class="sub">5.–9. Klasse</span></button>
+    </div>
+  </div>
+
+  <!-- SCHRITT 2: Stufe (nur PRiS) / Klasse -->
+  <div id="step-klasse" class="hidden">
+    <p class="step-label" id="stepLabel">Schritt 2 — Klasse</p>
+    <div class="choice-grid" id="klasse-grid"></div>
+  </div>
+
+  <!-- INHALT: Material + Kopiervorlagen -->
+  <div id="content" class="hidden">
+
+    <div class="top-accordion" id="acc-material">
+      <button class="head" onclick="toggleAcc('acc-material')">
+        <span class="acc-label"><span class="acc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8L12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg></span> Material</span><span class="chev">›</span>
+      </button>
+      <div class="body">
+
+        <h3 class="section-title">Material</h3>
+
+        <span class="placeholder-note" id="boxPlaceholderNote">Platzhalterbild — durch Foto der gepackten Kiste ersetzen</span>
+        <div class="box-visual" id="boxVisual">
+          <div class="cap"><strong id="boxTitle">Materialkiste</strong>
+            So sieht die gepackte Kiste im Regal aus. Foto folgt.</div>
+        </div>
+
+        <details class="sublist">
+          <summary>Gesamte Materialliste dieser Kiste</summary>
+          <div class="inner">
+            <ul id="gesamtlisteList">
+              <li>Handpuppen Skippy und Flippy</li>
+              <li>Kärtchen «Gefühlebärchen» (laminiert)</li>
+              <li>1-Fach Dokumententaschen mit Druckknopf (für KVs)</li>
+              <li>Tischglocke</li>
+              <li>Plastilin, 250 g, 2 Farben</li>
+              <li>Bambus-Holzspiesse, 15 cm, 1 Packung</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="unit reflexion-unit">
+          <summary><span class="acc-label"><span class="acc-icon"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.3-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.3 6.4L3 16"/><path d="M3 21v-5h5"/></svg></span> Reflexions- und Moderationsobjekte</span> <span class="pageref">allgemein</span></summary>
+          <div class="inner">
+            <div class="refl-photo">
+              <img class="zoomable" src="bilder/reflexionsmaterial.jpg" alt="Reflexions-Keksdose, Wunschkerze und Säckchen mit Redestein">
+            </div>
+            <div class="refl-item">
+              <div class="txt"><strong>Säckchen mit Redestein</strong><span>Nur wer den Stein hält, darf sprechen — für geordnete Gesprächs- und Feedbackrunden.</span></div>
+            </div>
+            <div class="refl-item">
+              <div class="txt"><strong>Reflexions-Keksdose</strong><span>Hat oben einen grünen und unten einen roten Kreis. Die Dose wird herumgegeben, und die Kinder sprechen etwas Positives (grün) oder Negatives (rot) hinein.</span></div>
+            </div>
+            <div class="refl-item">
+              <div class="txt"><strong>Wunschkerze</strong><span>Wer die Kerze hält, wünscht seinem Nachbarn/seiner Nachbarin etwas Schönes für den Tag.</span></div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+    <div class="top-accordion" id="acc-einheiten">
+      <button class="head" onclick="toggleAcc('acc-einheiten')">
+        <span class="acc-label"><span class="acc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.3" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.3" fill="currentColor" stroke="none"/></svg></span> Einheiten</span><span class="chev">›</span>
+      </button>
+      <div class="body">
+        <h3 class="section-title">Einheiten</h3>
+        <div id="unitsList"></div>
+      </div>
+    </div>
+
+    <div class="top-accordion" id="acc-kv">
+      <button class="head" onclick="toggleAcc('acc-kv')">
+        <span class="acc-label"><span class="acc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8Z"/><path d="M14 3v5h5"/><path d="M8 13h8M8 17h5"/></svg></span> Kopiervorlagen</span><span class="chev">›</span>
+      </button>
+      <div class="body">
+        <h3 class="section-title">Kopiervorlagen</h3>
+        <div id="kvListWrap" class="hidden">
+          <h4 class="mini-heading">In dieser Kiste enthalten</h4>
+          <ul class="mat-list" id="kvList"></ul>
+        </div>
+        <div class="copyright-note">
+          <strong>Urheberrechtlicher Hinweis:</strong> Aus urheberrechtlichen Gründen können die Kopiervorlagen
+          hier nicht digital bereitgestellt werden. Sie liegen entweder als USB-Stick oder als physische
+          Kopiervorlagen direkt in der Materialkiste bereit.
+        </div>
+      </div>
+    </div>
+
+    <div class="top-accordion" id="acc-zusatz">
+      <button class="head" onclick="toggleAcc('acc-zusatz')">
+        <span class="acc-label"><span class="acc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> Geschichten / Lieder / zusätzliche AB</span><span class="chev">›</span>
+      </button>
+      <div class="body">
+        <h3 class="section-title">Geschichten / Lieder / zusätzliche AB</h3>
+        <div id="zusatzList"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="modalTitle">Objekt</h3>
+    <p>Platzhalterbild — durch echtes Foto ersetzen, damit man das Objekt sofort erkennt.</p>
+    <button onclick="closeModal(event)">Schliessen</button>
+  </div>
+</div>
+
+<div class="photo-modal-bg" id="photoModalBg" onclick="closePhotoModal(event)">
+  <button class="photo-modal-close" onclick="closePhotoModal(event)">✕</button>
+  <img id="photoModalImg" src="" alt="">
+</div>
+
+<script>
+  const klassen = {
+    'PRiK': ['Gruppe 1', 'Gruppe 2'],
+    'PRiGS': ['1. Klasse', '2. Klasse', '3. Klasse', '4. Klasse'],
+    'PRiS': ['5. Klasse', '6. Klasse', '7. Klasse', '8. Klasse', '9. Klasse']
+  };
+
+  // PRiS wird in zwei Stufen unterteilt: Primarstufe (5./6.) und Oberstufe (7.–9.)
+  const prisStufen = {
+    'Primarstufe': ['5. Klasse', '6. Klasse'],
+    'Oberstufe': ['7. Klasse', '8. Klasse', '9. Klasse']
+  };
+  function stufeForKlasse(k){
+    for(const [name, list] of Object.entries(prisStufen)){ if(list.includes(k)) return name; }
+    return null;
+  }
+
+  // Einheiten je Klasse: nur Titel + Seitenzahl (aus dem Inhaltsverzeichnis).
+  // Material-/Schulzimmer-Angaben pro Einheit sind noch zu ergänzen.
+  const unitsData = {
+    'PRiGS': {
+      '1. Klasse': [
+        {t:'1. Einheit: Einführung in das Programm', p:34, mat:[
+          {label:'Einstiegsgeschichte (S. 34)', short:'Einstiegsgeschichte'},
+          {label:'Malkreiden', bring:true},
+          {label:'Papier', bring:true},
+          {label:'Säckchen mit Redestein', photo:'e1-redestein.jpg'},
+        ]},
+        {t:'2. Einheit: Ich und mein Körper — Selbstbildnis', p:36, mat:[
+          {label:'Pack-/Tapetenpapier', photo:'e2-papier.jpg'},
+          {label:'Buntstifte', bring:true},
+          {label:'Wasser-/Wachsfarben', bring:true},
+          {label:'Material zum Verzieren', photo:'e2-verzieren.jpg'},
+          {label:'evtl. Entspannungsmusik', bring:true},
+        ]},
+        {t:'3. Einheit: Ich und meine Sinne — Kim-Olympiade', p:37, mat:[
+          {label:'Stempelkarte (KV1) pro Kind'},
+          {label:'Stempel', photo:'e3-stempel.jpg'},
+          {label:'Hörmemory', photo:'e3-hoermemory.jpg', sub:[
+            {label:'paarweise gefüllte Filmdöschen (Lösung mit Farbpunkten auf Boden)'},
+          ]},
+          {label:'Seh-Kim', photo:'e3-seh-kim.jpg', sub:[
+            {label:'grosses Tuch, verschiedene Gegenstände'},
+            {label:'Bleistifte, A5/A6-Blätter', bring:true},
+          ]},
+          {label:'Riech-Quiz', photo:'e3-riech-quiz.jpg', sub:[
+            {label:'paarweise gefüllte Gläschen (Lösung mit Farbpunkten auf Boden)'},
+          ]},
+          {label:'Geschmacks-Kim', photo:'e3-geschmacks-kim.jpg', sub:[
+            {label:'Augenbinden, Löffel'},
+            {label:'Küchenmesser', bring:true},
+            {label:'verschiedene Lebensmittel (zum Beispiel …)', bring:true},
+          ]},
+          {label:'Tastbeutel', photo:'e3-tastbeutel.jpg', sub:[
+            {label:'Tastbeutel, verschiedene Gegenstände'},
+            {label:'Papier & Buntstifte', bring:true},
+          ]},
+          {label:'Wippe'},
+          {label:'Reflexionskarten (laminiert)'},
+        ]},
+        {t:'4. Einheit: Ich und meine Gefühle — Der Seelenvogel', p:40, mat:[
+          {label:'Bilderbuch «Der Seelenvogel» (Snunit/Golomb)', photo:'e4-seelenvogel.jpg'},
+          {label:'A3 Papier pro Kind (anstelle Karton)', bring:true},
+          {label:'Stifte', bring:true},
+        ]},
+        {t:'5. Einheit: Meine und andere Gefühle — Die Gefühlsuhr', p:42, mat:[
+          {label:'Pappteller pro Kind', photo:'e5-pappteller.jpg'},
+          {label:'Gefühlsuhr-Vorlage (KV2)'},
+          {label:'Gefühleliste (KV3)'},
+          {label:'Musterklammern'},
+          {label:'Kartonpapier, Stifte, Scheren, Kleber', bring:true},
+        ]},
+        {t:'6. Einheit: Ich und die anderen — Instrumente im Zauberwald', p:44, mat:[
+          {label:'Pro Kind ein kleines Instrument (Klanghölzer, Klangstäbe, Handtrommeln)', short:'kleines Instrument', note:'nicht in Kiste — im Musikzimmer holen'},
+        ]},
+        {t:'7. Einheit: Ich und die anderen — Auf andere zugehen', p:45, mat:[
+          {label:'Bilderbuch «Hey! Ja?» (Raschka)', photo:'e7-hey-ja.jpg'},
+        ]},
+        {t:'8. Einheit: Ich und die anderen — Ich in der Gruppe', p:46, mat:[
+          {label:'Reifen (Hula-Hoop)', short:'Reifen', note:'Durchführung in der Turnhalle'},
+        ]},
+        {t:'9. Einheit: Ich und die anderen — Das Ampelprinzip I', p:47, mat:[
+          {label:'Ampelsignalkarten pro Kind (KV4)'},
+          {label:'grüne/rote/gelbe Stifte, Scheren', bring:true},
+          {label:'grosse Ampel mit Farbkreisen', photo:'e9-ampel.jpg'},
+        ]},
+        {t:'10. Einheit: Ich und die anderen — Das Ampelprinzip II', p:49, mat:[
+          {label:'Situationsfotos (KV5)', alsoMaterial:'Karten Situationsfotos', photoPending:true},
+          {label:'Emotionskärtchen (KV6)'},
+          {label:'Karten Gesichter (laminiert)'},
+          {label:'Farbige Plakate A3'},
+        ]},
+      ],
+      '2. Klasse': [
+        {t:'1. Einheit: Was ich schon kann — Mein Stärkenbuch', p:51},
+        {t:'2. Einheit: Was ich schon kann — Ich kann dirigieren', p:53},
+        {t:'3. Einheit: Was ich schon kann — «Komplimente»', p:54},
+        {t:'4. Einheit: Was ich schon kann — Mutig sein', p:56},
+        {t:'5. Einheit: Was ich schon kann — Mutstein', p:59},
+        {t:'6. Einheit: Was ich schon kann — Meine Wünsche', p:61},
+        {t:'7. Einheit: Was ich schon kann — Entspannen', p:62},
+        {t:'8. Einheit: Was ich schon kann — «Wo die wilden Kerle wohnen»', p:64},
+        {t:'9. Einheit: Ich und meine Klasse — Die Wandzeitung I', p:66},
+        {t:'10. Einheit: Ich und meine Klasse — Die Wandzeitung II', p:67},
+      ],
+      '3. Klasse': [
+        {t:'Struktur und Aufbau der Hüttentage', p:69},
+        {t:'1. Einheit: Ankommen, Gruppenvereinbarung', p:71},
+        {t:'2. Einheit: Kooperative Spiele — Wir sind eine Gruppe', p:72},
+        {t:'3. Einheit: Darstellung, Theater, Improvisationen', p:75},
+        {t:'4. Einheit: Hörcollagen', p:76},
+        {t:'5. Einheit: Kochgruppe', p:77},
+        {t:'6. Einheit: Naturwahrnehmungsübungen', p:78},
+        {t:'7. Einheit: Nachtwanderung mit Lichterpfad (Abendeinheit A)', p:80},
+        {t:'8. Einheit: Lagerfeuer mit Stockbrot (Abendeinheit B)', p:81},
+        {t:'9. Einheit: Reflexion und weiterführende Aktivitäten für den Schulalltag', p:82},
+      ],
+      '4. Klasse': [
+        {t:'1. Einheit: Wenn ich mal nicht weiterweiss — Der Nachdenkstuhl', p:84},
+        {t:'2. Einheit: Wenn ich mal nicht weiterweiss — Probleme lösen', p:84},
+        {t:'3. Einheit: Wenn ich mal nicht weiterweiss — Der Moorpfad', p:86},
+        {t:'4. Einheit: Wenn ich mal nicht weiterweiss — Ich erzähl dir was!', p:87},
+        {t:'5. Einheit: Wenn ich mal nicht weiterweiss — Ich hör dir zu!', p:89},
+        {t:'6. Einheit: Wenn ich mal nicht weiterweiss — Minichaos', p:90},
+        {t:'7. Einheit: Wenn ich mal nicht weiterweiss — Experimente', p:91},
+        {t:'8. Einheit: Welch ein Stress — Stressabbau durch Bewegung', p:92},
+        {t:'9. Einheit: Welch ein Stress — Entspannung durch Fantasie', p:94},
+        {t:'10. Einheit: Abschlussstunde', p:96},
+      ],
+    },
+    'PRiS': {
+      '5. Klasse': [
+        {t:'1. Einheit: Vorbereitung des Projekts'},
+        {t:'2. Einheit: Gefühle erkennen und benennen'},
+        {t:'3. Einheit: Gefühle äussern'},
+        {t:'4. Einheit: Wie sehe ich die anderen?'},
+        {t:'5. Einheit: Wie gehe ich mit anderen um?'},
+        {t:'6. Einheit: Wie werde ich von anderen wahrgenommen?'},
+        {t:'7. Einheit: Selbstdarstellung in digitalen sozialen Netzwerken'},
+        {t:'8. Einheit: Cyber-Mobbing'},
+        {t:'9. Einheit: Nein sagen im Netz'},
+        {t:'10. Einheit: Ich kann nicht … Ich möchte besser können …'},
+        {t:'11. Einheit: Mein Stärkenbuch'},
+        {t:'12. Einheit: Wie kann ich meinen Körper beherrschen?'},
+        {t:'13. Einheit: Kräfte messen'},
+        {t:'14. Einheit: Wie kann ich mich entspannen?'},
+      ],
+      '6. Klasse': [
+        {t:'1. Einheit: Ein positives Selbstwertgefühl entwickeln I'},
+        {t:'2. Einheit: Ein positives Selbstwertgefühl entwickeln II'},
+        {t:'3. Einheit: Was ich schon kann — was ich mir wünsche'},
+        {t:'4. Einheit: Was mir das Leben leichter macht'},
+        {t:'5. Einheit: Eigene Veränderungen wahrnehmen'},
+        {t:'6. Einheit: Gruppenprozesse anstossen'},
+        {t:'7. Einheit: Konflikte lösen I'},
+        {t:'8. Einheit: Konflikte lösen II'},
+        {t:'9. Einheit: Grenzen setzen'},
+        {t:'10. Einheit: Gruppendynamiken und Freundschaften'},
+        {t:'11. Einheit: Einigungsprozesse erzielen'},
+        {t:'12. Einheit: Was die Gruppe stärkt'},
+      ],
+      '7. Klasse': [
+        {t:'1. Einheit: Stärken stärken'},
+        {t:'2. Einheit: Meine Ziele — und wie ich sie erreichen kann'},
+        {t:'3. Einheit: Nur Mut!'},
+        {t:'4. Einheit: Probleme lösen'},
+        {t:'5. Einheit: Warum Vertrauen wichtig ist'},
+        {t:'6. Einheit: Wie ich richtig kommuniziere'},
+        {t:'7. Einheit: Gefühle wahrnehmen und ausdrücken'},
+        {t:'8. Einheit: Emotionen verbalisieren'},
+        {t:'9. Einheit: Warum Einigungsprozesse wichtig sind'},
+        {t:'10. Einheit: Gemeinsamkeiten entdecken — Unterschiede annehmen'},
+        {t:'11. Einheit: Umgang mit digitalen sozialen Medien I'},
+        {t:'12. Einheit: Umgang mit digitalen sozialen Medien II'},
+        {t:'13. Einheit: Umgang mit digitalen sozialen Medien III'},
+        {t:'14. Einheit: Sich selbst einschätzen — von anderen eingeschätzt werden'},
+      ],
+      '8. Klasse': [
+        {t:'1. Einheit: Wer bin ich?'},
+        {t:'2. Einheit: Meine Interessen und Ziele'},
+        {t:'3. Einheit: Im Gespräch überzeugen'},
+        {t:'4. Einheit: Selbstsicher auftreten'},
+        {t:'5. Einheit: Projektarbeit I'},
+        {t:'6. Einheit: Projektarbeit II'},
+        {t:'7. Einheit: Seelischer Gewalt vorbeugen: Cyber-Mobbing'},
+        {t:'8. Einheit: Teamgeist'},
+        {t:'9. Einheit: Rollen- und Geschlechtsklischees'},
+        {t:'10. Einheit: Konflikte mit Eltern — Eltern verstehen'},
+        {t:'11. Einheit: Begegnungen vorbereiten'},
+        {t:'12. Einheit: Begegnung präsentieren und reflektieren'},
+        {t:'13. Einheit: Prüfungsangst und -stress'},
+        {t:'14. Einheit: Selbst- und Zeitmanagement'},
+      ],
+      '9. Klasse': [
+        {t:'1. Einheit: Ein Blick in die Zukunft'},
+        {t:'2. Einheit: Ein Blick auf die eigenen Stärken'},
+        {t:'3. Einheit: Teamkompetenz'},
+        {t:'4. Einheit: Zivilcourage zeigen!'},
+        {t:'5. Einheit: Emotionen regulieren'},
+        {t:'6. Einheit: Teamgeist'},
+        {t:'7. Einheit: Foto-Story I'},
+        {t:'8. Einheit: Foto-Story II'},
+        {t:'9. Einheit: Abschied und Chance?'},
+        {t:'10. Einheit: Abschlusseinheit'},
+      ],
+    }
+  };
+
+  // Geschichten / Lieder / zusätzliche AB je Klasse.
+  // - Klasse fehlt im Objekt  -> noch nicht erfasst ("noch zu ergänzen")
+  // - leeres Array []         -> bewusst leer (Klasse hat keine, Strich wird angezeigt)
+  // - Array mit Titeln        -> wird als Liste dargestellt. "einheit" (falls bekannt, aus der
+  //   "E<Zahl>_"-Dateibenennung) verknüpft den Eintrag mit der jeweiligen Einheit.
+  const zusatzData = {
+    'PRiGS': {
+      '1. Klasse': [],
+      '2. Klasse': [
+        {title:'Annika lernt schwimmen', einheit:1},
+        {title:'Zaubermeister Xurubu', einheit:4},
+        {title:'Kindermutmachlied', einheit:5},
+        {title:'die Reise in die Natur', einheit:7},
+      ],
+      '3. Klasse': [
+        {title:'Beispielgeschichte Bewegungsimitation'},
+        {title:'Gemeinschaftsbilder'},
+        {title:'Kochrezepte 3.Kl'},
+        {title:'Tierkarten'},
+      ],
+      '4. Klasse': [
+        {title:'Problemgeschichte', einheit:2},
+        {title:'das Regenspiel', einheit:8},
+        {title:'der Zauberteppich', einheit:9},
+      ],
+    },
+    'PRiS': {
+      '5. Klasse': [
+        {title:'Gefühlekärtchen 5./6.'},
+      ],
+      '6. Klasse': [
+        {title:'Gefühlekärtchen 5./6.'},
+        {title:'Ich über mich I', einheit:1},
+        {title:'Ich über mich II', einheit:1},
+        {title:'Fantasiereise mit Stationen meines Lebens', einheit:4},
+        {title:'Bilanzbogen', einheit:6},
+        {title:'Fragebogen', einheit:9},
+      ],
+    }
+  };
+
+  // Foto der gepackten Materialkiste je Klasse (falls schon vorhanden).
+  // Fehlt ein Eintrag, bleibt der Platzhaltertext stehen.
+  const kistenFotos = {
+    'PRiGS': {
+      '1. Klasse': 'kiste-1klasse.jpg',
+    }
+  };
+
+  function renderKistenFoto(lehrmittel, klasse){
+    const visual = document.getElementById('boxVisual');
+    const note = document.getElementById('boxPlaceholderNote');
+    const titel = 'Materialkiste — ' + klasse + ' (' + lehrmittel + ')';
+    const foto = kistenFotos[lehrmittel] && kistenFotos[lehrmittel][klasse];
+    if(foto){
+      note.classList.add('hidden');
+      visual.classList.add('has-photo');
+      visual.innerHTML = `<div class="cap"><strong>${titel}</strong></div>
+        <div class="box-photo-row">
+          <div class="box-placeholder-square">Bild<br>folgt</div>
+          <div class="box-photo-wrap"><img class="zoomable" src="bilder/${foto}" alt="${titel}"></div>
+        </div>`;
+    } else {
+      note.classList.remove('hidden');
+      visual.classList.remove('has-photo');
+      visual.innerHTML = `<div class="cap"><strong>${titel}</strong></div>`;
+    }
+  }
+
+  function renderZusatz(lehrmittel, klasse){
+    const wrap = document.getElementById('zusatzList');
+    const list = zusatzData[lehrmittel] && zusatzData[lehrmittel][klasse];
+    if(list === undefined){
+      wrap.innerHTML = '<p class="zusatz-tbd">Noch zu ergänzen.</p>';
+    } else if(list.length === 0){
+      wrap.innerHTML = '<p class="zusatz-empty">—</p>';
+    } else {
+      wrap.innerHTML = '<ul class="zusatz-list">' + list.map(item =>
+        `<li>${item.title}${item.einheit ? ' <span class="einheit-tag">Einheit '+item.einheit+'</span>' : ''}</li>`
+      ).join('') + '</ul>';
+    }
+  }
+
+  function renderUnits(lehrmittel, klasse){
+    const list = document.getElementById('unitsList');
+    list.innerHTML = '';
+    const units = (unitsData[lehrmittel] && unitsData[lehrmittel][klasse]) || null;
+    if(!units){
+      list.innerHTML = '<p style="color:var(--ink-soft); font-size:14px;">Einheiten für diese Klasse sind noch zu ergänzen.</p>';
+      return;
+    }
+    const zusatzList = zusatzData[lehrmittel] && zusatzData[lehrmittel][klasse];
+    units.forEach(u=>{
+      const d = document.createElement('details');
+      d.className = 'unit';
+      let bodyHtml;
+      if(u.mat){
+        const {material, bring, kv} = splitMat(u.mat);
+        const materialHtml = material.length
+          ? '<div class="mat-group mat-group-material"><h4>Material Kiste</h4><ul class="mat-list">' + material.map(m => renderMatItem(m)).join('') + '</ul></div>'
+          : '';
+        const bringHtml = bring.length
+          ? '<div class="mat-group mat-group-bring"><h4>Selbst mitbringen</h4><ul class="mat-list">' + bring.map(m => `<li class="mat-item flat">${m.short || m.label}</li>`).join('') + '</ul></div>'
+          : '';
+        const kvHtml = kv.length
+          ? '<h4>Kopiervorlagen</h4><ul class="mat-list">' + kv.map(k => `<li class="mat-item flat">KV${k.num} — ${k.label}${k.alsoMaterial ? ' <span class="printed-tag">bereits als Karten vorhanden</span>' : ''}</li>`).join('') + '</ul>'
+          : '';
+        bodyHtml = materialHtml + bringHtml + kvHtml;
+      } else {
+        bodyHtml = '<h4>Material Kiste</h4><p style="font-size:13.5px; color:var(--ink-soft); margin:0;">Noch zu ergänzen.</p>';
+      }
+      // Einheitennummer aus dem Titel lesen (z. B. "3. Einheit: ...") und passende
+      // Geschichten/Lieder/zusätzliche AB dieser Einheit anhängen, falls vorhanden.
+      const numMatch = u.t.match(/^(\d+)\./);
+      const unitNum = numMatch ? Number(numMatch[1]) : null;
+      const matchingZusatz = (unitNum && zusatzList) ? zusatzList.filter(z => z.einheit === unitNum) : [];
+      const zusatzHtml = matchingZusatz.length
+        ? `<h4>Geschichte / Lied / AB</h4><ul class="mat-list">${matchingZusatz.map(z => `<li class="mat-item flat">${z.title}</li>`).join('')}</ul>`
+        : '';
+      d.innerHTML = `<summary>${u.t}${u.p ? ' <span class="pageref">S. '+u.p+'</span>' : ''}</summary>
+        <div class="inner">
+          ${bodyHtml}
+          ${zusatzHtml}
+        </div>`;
+      list.appendChild(d);
+    });
+  }
+
+  // Teilt die Materialliste einer Einheit in drei Gruppen: vorhandenes Material,
+  // selbst mitzubringendes Material und Kopiervorlagen (aus "(KVn)"-Kennzeichnung).
+  // Verschachtelte Objekte (mit .sub) bleiben als Ganzes im Material-Teil.
+  function splitMat(matArr){
+    const material = [], bring = [], kv = [];
+    matArr.forEach(m=>{
+      if(m.sub){ material.push(m); return; }
+      const label = m.short || m.label;
+      const kvMatch = label.match(/\(KV(\d+)\)/i);
+      if(kvMatch && !m.bring){
+        const num = kvMatch[1];
+        const base = label.replace(/\(KV\d+\)/i,'').replace(/pro Kind/i,'').trim();
+        kv.push({num, label: base, alsoMaterial: m.alsoMaterial});
+        if(m.alsoMaterial){ material.push({label: m.alsoMaterial, photo: m.photo, photoPending: m.photoPending}); }
+        return;
+      }
+      if(m.bring){ bring.push(m); return; }
+      material.push(m);
+    });
+    return {material, bring, kv};
+  }
+
+  function renderMatItem(m){
+    const bringTag = m.bring ? ' <span class="bring-tag">selbst mitbringen</span>' : '';
+    const noteTag = m.note ? ` <span class="note-tag">${m.note}</span>` : '';
+    const thumb = m.photo
+      ? `<div class="mat-thumb"><img class="zoomable" src="bilder/${m.photo}" alt="${m.label}"></div>`
+      : (m.photoPending ? `<div class="mat-thumb-pending">Bild<br>folgt</div>` : '');
+    const noteClass = m.note ? ' note-bg' : '';
+    const hasVisual = m.photo || m.photoPending;
+    if(m.sub){
+      const subHtml = `<span class="mat-label">${m.label}</span>
+        <ul class="mat-sub">${m.sub.map(s => `<li${s.bring ? ' class="bring-sub"' : (s.note ? ' class="note-sub"' : '')}>${s.label}${s.bring ? ' <span class="bring-tag">selbst mitbringen</span>' : ''}${s.note ? ` <span class="note-tag">${s.note}</span>` : ''}</li>`).join('')}</ul>`;
+      if(hasVisual){
+        return `<li class="mat-item mat-item-photo${noteClass}"><div class="mat-text">${subHtml}</div>${thumb}</li>`;
+      }
+      return `<li class="mat-item${noteClass}">${subHtml}</li>`;
+    }
+    if(hasVisual){
+      return `<li class="mat-item mat-item-photo flat${noteClass}"><div class="mat-text">${m.label}${bringTag}${noteTag}</div>${thumb}</li>`;
+    }
+    return `<li class="mat-item flat${noteClass}">${m.label}${bringTag}${noteTag}</li>`;
+  }
+
+  // Baut die Gesamtliste der Kiste aus den Einheiten-Materialien: nur was tatsächlich
+  // IN der Kiste liegt (nicht "selbst mitbringen"), ohne Beispiele/Zusätze (die stehen
+  // bei der jeweiligen Einheit). Kopiervorlagen (KVn) werden separat gesammelt, inkl.
+  // der Einheit, aus der sie stammen (für die Kopiervorlagen-Übersicht).
+  function buildGesamtliste(lehrmittel, klasse){
+    const units = unitsData[lehrmittel] && unitsData[lehrmittel][klasse];
+    if(!units) return null;
+    const matSet = new Set();
+    const kvMap = new Map();
+    units.forEach(u=>{
+      if(!u.mat) return;
+      const numMatch = u.t.match(/^(\d+)\./);
+      const unitNum = numMatch ? Number(numMatch[1]) : null;
+      u.mat.forEach(m=>{
+        if(m.bring || m.note) return;
+        let label = m.short || m.label;
+        const kvMatch = label.match(/\(KV(\d+)\)/i);
+        if(kvMatch){
+          const num = kvMatch[1];
+          let base = label.replace(/\(KV\d+\)/i,'').replace(/pro Kind/i,'').trim();
+          if(!kvMap.has(num)) kvMap.set(num, {label: base, einheit: unitNum, alsoMaterial: m.alsoMaterial});
+          if(m.alsoMaterial) matSet.add(m.alsoMaterial);
+          return;
+        }
+        let cleaned = label.replace(/\([^)]*\)/g,'').replace(/pro Kind/i,'').trim();
+        if(cleaned) matSet.add(cleaned);
+      });
+    });
+    const matLines = Array.from(matSet);
+    const kvLines = Array.from(kvMap.entries())
+      .sort((a,b) => Number(a[0]) - Number(b[0]))
+      .map(([num,info]) => `KV${num} — ${info.label}${info.einheit ? ' <span class="einheit-tag">Einheit '+info.einheit+'</span>' : ''}`);
+    return { mat: matLines, kv: kvLines };
+  }
+
+  function renderGesamtliste(lehrmittel, klasse){
+    const ul = document.getElementById('gesamtlisteList');
+    const data = buildGesamtliste(lehrmittel, klasse);
+    if(!data) return; // kein Datensatz -> Platzhalterliste bleibt stehen
+    ul.innerHTML = data.mat.map(l => `<li>${l}</li>`).join('');
+  }
+
+  function renderKvList(lehrmittel, klasse){
+    const wrap = document.getElementById('kvListWrap');
+    const ul = document.getElementById('kvList');
+    const data = buildGesamtliste(lehrmittel, klasse);
+    if(data && data.kv.length){
+      ul.innerHTML = data.kv.map(l => `<li class="mat-item flat">${l}</li>`).join('');
+      wrap.classList.remove('hidden');
+    } else {
+      ul.innerHTML = '';
+      wrap.classList.add('hidden');
+    }
+  }
+
+  let selected = { lehrmittel: null, stufe: null, klasse: null };
+
+  function selectLehrmittel(name){
+    selected.lehrmittel = name;
+    selected.stufe = null;
+    selected.klasse = null;
+    document.documentElement.setAttribute('data-theme', name);
+    document.getElementById('eyebrow').textContent = 'StaFF · ' + name + ' — Materialkisten';
+
+    // Schritt 1 ausblenden, Chip zeigen
+    document.getElementById('step-lehrmittel').classList.add('hidden');
+    document.getElementById('summaryBar').classList.remove('hidden');
+    document.getElementById('chipLehrmittel').innerHTML = name + ' <button onclick="backToLehrmittel()">↺</button>';
+    document.getElementById('chipStufe').classList.add('hidden');
+    document.getElementById('chipKlasse').classList.add('hidden');
+
+    renderStep2();
+    document.getElementById('step-klasse').classList.remove('hidden');
+    document.getElementById('content').classList.add('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  // Baut Schritt 2 auf: bei PRiS zuerst die Stufenwahl (Primarstufe/Oberstufe),
+  // danach (oder bei den anderen Lehrmitteln direkt) die Klassenwahl.
+  function renderStep2(){
+    const grid = document.getElementById('klasse-grid');
+    const label = document.getElementById('stepLabel');
+    grid.innerHTML = '';
+    grid.classList.remove('twocol', 'stufe-grid');
+
+    if(selected.lehrmittel === 'PRiS' && !selected.stufe){
+      label.textContent = 'Schritt 2 — Stufe';
+      grid.classList.add('stufe-grid');
+      Object.keys(prisStufen).forEach(stufeName=>{
+        const btn = document.createElement('button');
+        btn.className = 'choice-card klasse-card stufe-card';
+        btn.innerHTML = stufeName + '<span class="sub">' + prisStufen[stufeName].join(', ') + '</span>';
+        btn.onclick = () => selectStufe(stufeName);
+        grid.appendChild(btn);
+      });
+      return;
+    }
+
+    label.textContent = selected.lehrmittel === 'PRiS' ? 'Schritt 3 — Klasse' : 'Schritt 2 — Klasse';
+    if(selected.lehrmittel === 'PRiGS') grid.classList.add('twocol');
+    const list = selected.lehrmittel === 'PRiS' ? prisStufen[selected.stufe] : klassen[selected.lehrmittel];
+    list.forEach(k=>{
+      const btn = document.createElement('button');
+      btn.className = 'choice-card klasse-card';
+      btn.textContent = k;
+      btn.onclick = () => selectKlasse(k);
+      grid.appendChild(btn);
+    });
+  }
+
+  function selectStufe(name){
+    selected.stufe = name;
+    selected.klasse = null;
+    document.getElementById('chipStufe').classList.remove('hidden');
+    document.getElementById('chipStufe').innerHTML = name + ' <button onclick="backToStufe()">↺</button>';
+    document.getElementById('chipKlasse').classList.add('hidden');
+    renderStep2();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function selectKlasse(k){
+    selected.klasse = k;
+    // Deep-Link direkt zu einer PRiS-Klasse (z. B. per QR-Code): Stufe automatisch ableiten
+    if(selected.lehrmittel === 'PRiS' && !selected.stufe){
+      const s = stufeForKlasse(k);
+      if(s){
+        selected.stufe = s;
+        document.getElementById('chipStufe').classList.remove('hidden');
+        document.getElementById('chipStufe').innerHTML = s + ' <button onclick="backToStufe()">↺</button>';
+      }
+    }
+    document.getElementById('step-klasse').classList.add('hidden');
+    document.getElementById('chipKlasse').classList.remove('hidden');
+    document.getElementById('chipKlasse').innerHTML = k + ' <button onclick="backToKlasse()">↺</button>';
+    renderKistenFoto(selected.lehrmittel, k);
+    renderUnits(selected.lehrmittel, k);
+    renderGesamtliste(selected.lehrmittel, k);
+    renderKvList(selected.lehrmittel, k);
+    renderZusatz(selected.lehrmittel, k);
+    document.getElementById('content').classList.remove('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function backToLehrmittel(){
+    selected = { lehrmittel:null, stufe:null, klasse:null };
+    document.documentElement.setAttribute('data-theme', 'default');
+    document.getElementById('eyebrow').textContent = 'StaFF · Materialkisten';
+    document.getElementById('summaryBar').classList.add('hidden');
+    document.getElementById('chipStufe').classList.add('hidden');
+    document.getElementById('chipKlasse').classList.add('hidden');
+    document.getElementById('step-klasse').classList.add('hidden');
+    document.getElementById('content').classList.add('hidden');
+    document.getElementById('step-lehrmittel').classList.remove('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function backToStufe(){
+    selected.stufe = null;
+    selected.klasse = null;
+    document.getElementById('chipStufe').classList.add('hidden');
+    document.getElementById('chipKlasse').classList.add('hidden');
+    document.getElementById('content').classList.add('hidden');
+    renderStep2();
+    document.getElementById('step-klasse').classList.remove('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function backToKlasse(){
+    selected.klasse = null;
+    document.getElementById('chipKlasse').classList.add('hidden');
+    document.getElementById('content').classList.add('hidden');
+    renderStep2();
+    document.getElementById('step-klasse').classList.remove('hidden');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function toggleAcc(id){ document.getElementById(id).classList.toggle('open'); }
+
+  function openModal(name){
+    document.getElementById('modalTitle').textContent = name;
+    document.getElementById('modalBg').classList.add('show');
+  }
+  function closeModal(e){ document.getElementById('modalBg').classList.remove('show'); }
+
+  // Fotos vergrössern: jedes Bild mit Klasse "zoomable" öffnet sich beim Klick
+  // in einer Lightbox (funktioniert auch für später dynamisch eingefügte Fotos).
+  function openPhotoModal(src, alt){
+    const img = document.getElementById('photoModalImg');
+    img.src = src;
+    img.alt = alt || '';
+    document.getElementById('photoModalBg').classList.add('show');
+  }
+  function closePhotoModal(e){
+    document.getElementById('photoModalBg').classList.remove('show');
+    document.getElementById('photoModalImg').src = '';
+  }
+  document.addEventListener('click', function(e){
+    const img = e.target.closest('img.zoomable');
+    if(img) openPhotoModal(img.src, img.alt);
+  });
+
+  // QR-Code-Einstieg: liest ?lehrmittel=PRiGS&klasse=2.%20Klasse aus der URL
+  // und springt direkt zur passenden Kiste. Alle Navigations-/Zurück-Buttons
+  // bleiben danach normal aktiv, damit man trotzdem andere Klassen ansehen kann.
+  (function initFromUrl(){
+    const params = new URLSearchParams(window.location.search);
+    const lehrmittel = params.get('lehrmittel');
+    const klasse = params.get('klasse');
+    if(lehrmittel && klassen[lehrmittel]){
+      selectLehrmittel(lehrmittel);
+      if(klasse && klassen[lehrmittel].includes(klasse)){
+        selectKlasse(klasse);
+      }
+    }
+  })();
+</script>
+
+</body>
+</html>

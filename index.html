@@ -409,8 +409,8 @@
             {label:'Tastbeutel, verschiedene Gegenstände'},
             {label:'Papier & Buntstifte', bring:true},
           ]},
-          {label:'Wippe'},
-          {label:'Reflexionskarten (laminiert)'},
+          {label:'Wippe', photo:'e3-wippe.jpg'},
+          {label:'Reflexionskarten (laminiert)', photo:'e3-reflexionskarten.jpg'},
         ]},
         {t:'4. Einheit: Ich und meine Gefühle — Der Seelenvogel', p:40, mat:[
           {label:'Bilderbuch «Der Seelenvogel» (Snunit/Golomb)'},
@@ -439,10 +439,10 @@
           {label:'grosse Ampel mit Farbkreisen', photo:'e9-ampel.jpg'},
         ]},
         {t:'10. Einheit: Ich und die anderen — Das Ampelprinzip II', p:49, mat:[
-          {label:'Situationsfotos (KV5)', alsoMaterial:'Karten Situationsfotos', photoPending:true},
+          {label:'Situationsfotos (KV5)', alsoMaterial:'Karten Situationsfotos', photo:'e10-situationsfotos.jpg'},
           {label:'Emotionskärtchen (KV6)'},
-          {label:'Karten Gesichter (laminiert)'},
-          {label:'Farbige Plakate A3'},
+          {label:'Karten Gesichter (laminiert)', photo:'e10-gesichter.jpg'},
+          {label:'Farbige Plakate A3', photo:'e10-plakate.jpg'},
         ]},
       ],
       '2. Klasse': [
@@ -605,7 +605,7 @@
   // Fehlt ein Eintrag, bleibt der Platzhaltertext stehen.
   const kistenFotos = {
     'PRiGS': {
-      '1. Klasse': 'kiste-1klasse.jpg',
+      '1. Klasse': ['kiste-1klasse.jpg', 'kiste-1klasse-2.jpg'],
     }
   };
 
@@ -613,15 +613,17 @@
     const visual = document.getElementById('boxVisual');
     const note = document.getElementById('boxPlaceholderNote');
     const titel = 'Materialkiste — ' + klasse + ' (' + lehrmittel + ')';
-    const foto = kistenFotos[lehrmittel] && kistenFotos[lehrmittel][klasse];
-    if(foto){
+    let fotos = kistenFotos[lehrmittel] && kistenFotos[lehrmittel][klasse];
+    if(fotos && !Array.isArray(fotos)) fotos = [fotos];
+    if(fotos && fotos.length){
       note.classList.add('hidden');
       visual.classList.add('has-photo');
+      const slots = [fotos[0], fotos[1]].map(f => f
+        ? `<div class="box-photo-wrap"><img class="zoomable" src="bilder/${f}" alt="${titel}"></div>`
+        : `<div class="box-placeholder-square">Bild<br>folgt</div>`
+      ).join('');
       visual.innerHTML = `<div class="cap"><strong>${titel}</strong></div>
-        <div class="box-photo-row">
-          <div class="box-placeholder-square">Bild<br>folgt</div>
-          <div class="box-photo-wrap"><img class="zoomable" src="bilder/${foto}" alt="${titel}"></div>
-        </div>`;
+        <div class="box-photo-row">${slots}</div>`;
     } else {
       note.classList.remove('hidden');
       visual.classList.remove('has-photo');

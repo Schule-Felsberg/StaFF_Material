@@ -111,6 +111,11 @@
 
   .copyright-note{ border-left:2px solid var(--line); padding:2px 0 2px 14px; font-size:12.5px; line-height:1.5; color: var(--ink-soft); margin-bottom:16px; }
   .copyright-note strong{ color: var(--ink-soft); font-weight:600; }
+  .klassen-hinweis{ background:#EFF3FA; border-left:3px solid var(--accent-deep); padding:8px 14px; font-size:13px; line-height:1.5; color: var(--ink-soft); margin-bottom:14px; border-radius:6px; }
+  .klassen-hinweis:empty{ display:none; }
+  .klassen-hinweis strong{ color: var(--ink); }
+  .unit-hinweis{ background:#EFF3FA; border-left:3px solid var(--accent-deep); padding:8px 14px; font-size:13px; line-height:1.5; color: var(--ink-soft); margin-bottom:14px; border-radius:6px; }
+  .unit-hinweis strong{ color: var(--ink); }
   .zusatz-list{ list-style:none; margin:0; padding:0; }
   .zusatz-list li{ font-size:13.5px; color: var(--ink); padding:8px 0; border-bottom:1px dashed var(--line); }
   .zusatz-list li:last-child{ border-bottom:none; }
@@ -190,6 +195,9 @@
     background:#FBE9E9; color:#9B4444; padding:2px 7px; border-radius:999px;
     margin-left:4px; white-space:nowrap; vertical-align:middle;
   }
+  .mat-item.note-bg{ background:#FBE9E9; }
+  .mat-item.available-bg{ background:#E4EEDA; border-radius:8px; padding:8px 12px; border-bottom:none; margin-bottom:4px; }
+  .mat-link{ display:inline-block; font-size:12.5px; color: var(--accent-deep); text-decoration:underline; margin-top:3px; word-break:break-all; }
   .roomlist li{ margin-bottom:3px; }
 
   .unit.reflexion-unit > summary{ font-style: normal; }
@@ -235,7 +243,7 @@
       <button class="choice-card" onclick="selectLehrmittel('PRiGS')">PRiGS
         <span class="sub">1.–4. Klasse</span></button>
       <button class="choice-card" onclick="selectLehrmittel('PRiS')">PRiS
-        <span class="sub">5.–9. Klasse</span></button>
+        <span class="sub">5.–6. Klasse</span></button>
     </div>
   </div>
 
@@ -267,7 +275,7 @@
           <div class="inner">
             <ul id="gesamtlisteList">
               <li>Handpuppen Skippy und Flippy</li>
-              <li>Kärtchen «Gefühlebärchen» (laminiert)</li>
+              <li>Kärtchen «Gefühlebärchen»</li>
               <li>1-Fach Dokumententaschen mit Druckknopf (für KVs)</li>
               <li>Tischglocke</li>
               <li>Plastilin, 250 g, 2 Farben</li>
@@ -282,15 +290,7 @@
             <div class="refl-photo">
               <img class="zoomable" src="bilder/reflexionsmaterial.jpg" alt="Reflexions-Keksdose, Wunschkerze und Säckchen mit Redestein">
             </div>
-            <div class="refl-item">
-              <div class="txt"><strong>Säckchen mit Redestein</strong><span>Nur wer den Stein hält, darf sprechen — für geordnete Gesprächs- und Feedbackrunden.</span></div>
-            </div>
-            <div class="refl-item">
-              <div class="txt"><strong>Reflexions-Keksdose</strong><span>Hat oben einen grünen und unten einen roten Kreis. Die Dose wird herumgegeben, und die Kinder sprechen etwas Positives (grün) oder Negatives (rot) hinein.</span></div>
-            </div>
-            <div class="refl-item">
-              <div class="txt"><strong>Wunschkerze</strong><span>Wer die Kerze hält, wünscht seinem Nachbarn/seiner Nachbarin etwas Schönes für den Tag.</span></div>
-            </div>
+            <div id="reflexionsList"></div>
           </div>
         </details>
 
@@ -303,6 +303,7 @@
       </button>
       <div class="body">
         <h3 class="section-title">Einheiten</h3>
+        <div id="klassenHinweis" class="klassen-hinweis"></div>
         <div id="unitsList"></div>
       </div>
     </div>
@@ -327,10 +328,10 @@
 
     <div class="top-accordion" id="acc-zusatz">
       <button class="head" onclick="toggleAcc('acc-zusatz')">
-        <span class="acc-label"><span class="acc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> Geschichten / Lieder / zusätzliche AB</span><span class="chev">›</span>
+        <span class="acc-label"><span class="acc-icon" id="zusatzAccIcon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span> <span id="zusatzAccLabel">Geschichten / Lieder / zusätzliche AB</span></span><span class="chev">›</span>
       </button>
       <div class="body">
-        <h3 class="section-title">Geschichten / Lieder / zusätzliche AB</h3>
+        <h3 class="section-title" id="zusatzSectionTitle">Geschichten / Lieder / zusätzliche AB</h3>
         <div id="zusatzList"></div>
       </div>
     </div>
@@ -356,18 +357,8 @@
   const klassen = {
     'PRiK': ['Gruppe 1', 'Gruppe 2'],
     'PRiGS': ['1. Klasse', '2. Klasse', '3. Klasse', '4. Klasse'],
-    'PRiS': ['5. Klasse', '6. Klasse', '7. Klasse', '8. Klasse', '9. Klasse']
+    'PRiS': ['5. Klasse', '6. Klasse']
   };
-
-  // PRiS wird in zwei Stufen unterteilt: Primarstufe (5./6.) und Oberstufe (7.–9.)
-  const prisStufen = {
-    'Primarstufe': ['5. Klasse', '6. Klasse'],
-    'Oberstufe': ['7. Klasse', '8. Klasse', '9. Klasse']
-  };
-  function stufeForKlasse(k){
-    for(const [name, list] of Object.entries(prisStufen)){ if(list.includes(k)) return name; }
-    return null;
-  }
 
   // Einheiten je Klasse: nur Titel + Seitenzahl (aus dem Inhaltsverzeichnis).
   // Material-/Schulzimmer-Angaben pro Einheit sind noch zu ergänzen.
@@ -410,7 +401,7 @@
             {label:'Papier & Buntstifte', bring:true},
           ]},
           {label:'Wippe', photo:'e3-wippe.jpg'},
-          {label:'Reflexionskarten (laminiert)', photo:'e3-reflexionskarten.jpg'},
+          {label:'Reflexionskarten', photo:'e3-reflexionskarten.jpg'},
         ]},
         {t:'4. Einheit: Ich und meine Gefühle — Der Seelenvogel', p:40, mat:[
           {label:'Bilderbuch «Der Seelenvogel» (Snunit/Golomb)'},
@@ -441,121 +432,253 @@
         {t:'10. Einheit: Ich und die anderen — Das Ampelprinzip II', p:49, mat:[
           {label:'Situationsfotos (KV5)', alsoMaterial:'Karten Situationsfotos', photo:'e10-situationsfotos.jpg'},
           {label:'Emotionskärtchen (KV6)'},
-          {label:'Karten Gesichter (laminiert)', photo:'e10-gesichter.jpg'},
+          {label:'Karten Gesichter', photo:'e10-gesichter.jpg'},
           {label:'Farbige Plakate A3', photo:'e10-plakate.jpg'},
         ]},
       ],
       '2. Klasse': [
-        {t:'1. Einheit: Was ich schon kann — Mein Stärkenbuch', p:51},
-        {t:'2. Einheit: Was ich schon kann — Ich kann dirigieren', p:53},
-        {t:'3. Einheit: Was ich schon kann — «Komplimente»', p:54},
-        {t:'4. Einheit: Was ich schon kann — Mutig sein', p:56},
-        {t:'5. Einheit: Was ich schon kann — Mutstein', p:59},
-        {t:'6. Einheit: Was ich schon kann — Meine Wünsche', p:61},
-        {t:'7. Einheit: Was ich schon kann — Entspannen', p:62},
-        {t:'8. Einheit: Was ich schon kann — «Wo die wilden Kerle wohnen»', p:64},
-        {t:'9. Einheit: Ich und meine Klasse — Die Wandzeitung I', p:66},
-        {t:'10. Einheit: Ich und meine Klasse — Die Wandzeitung II', p:67},
+        {t:'1. Einheit: Was ich schon kann — Mein Stärkenbuch', p:51, mat:[
+          {label:'A5 Hefte pro SuS', bring:true},
+          {label:'Stärkenbuch (KV7)'},
+        ]},
+        {t:'2. Einheit: Was ich schon kann — Ich kann dirigieren', p:53, mat:[
+          {label:'Verschiedene Instrumente', note:'nicht in Kiste — im Musikzimmer holen'},
+        ]},
+        {t:'3. Einheit: Was ich schon kann — «Komplimente»', p:54, mat:[
+          {label:'Kuvert', photo:'g2-e3-kuvert.jpg'},
+          {label:'Flauschige Stoffstücke', note:'noch nicht vorhanden'},
+          {label:'Stärkenbuch der SuS', bring:true},
+          {label:'farbiges Papier', bring:true},
+          {label:'evtl. Plakat', bring:true},
+        ]},
+        {t:'4. Einheit: Was ich schon kann — Mutig sein', p:56, mat:[
+          {label:'Der Zauberer Xurubu (KV4)', alsoMaterial:'Karten Geschichte Zauberer Xurubu', photo:'g2-e4-karten-xurubu.jpg'},
+        ]},
+        {t:'5. Einheit: Was ich schon kann — Mutstein', p:59, mat:[
+          {label:'1 Stein pro SuS', bring:true},
+          {label:'Material zum Malen', bring:true},
+        ]},
+        {t:'6. Einheit: Was ich schon kann — Meine Wünsche', p:61, mat:[
+          {label:'Wunschblume (KV9)'},
+          {label:'Wasserbecken', photo:'g2-e6-wasserbecken.jpg'},
+        ]},
+        {t:'7. Einheit: Was ich schon kann — Entspannen', p:62, mat:[
+          {label:'evtl. Kissen oder Matten (gemütliches Vorlesen)', bring:true},
+        ]},
+        {t:'8. Einheit: Was ich schon kann — «Wo die wilden Kerle wohnen»', p:64, mat:[
+          {label:'Bilderbuch «Wo die wilden Kerle wohnen»'},
+          {label:'Utensilien / Verkleidungen für Rollenspiel', note:'noch nicht vorhanden'},
+          {label:'Glocke', photo:'g2-e8-glocke.jpg'},
+        ]},
+        {t:'9. Einheit: Ich und meine Klasse — Die Wandzeitung I', p:66, mat:[
+          {label:'Box', note:'noch nicht vorhanden — evtl. gestrichen'},
+          {label:'A7 Kärtchen', bring:true},
+          {label:'Rubriken für Wandzeitung', photo:'g2-e9-rubriken-wandzeitung.jpg'},
+          {label:'Redestein', photo:'g2-e9-redestein.jpg'},
+          {label:'Emotionskärtchen', photo:'g2-e9-emotionskaertchen.jpg'},
+        ]},
+        {t:'10. Einheit: Ich und meine Klasse — Die Wandzeitung II', p:67, mat:[
+          {label:'Rubriken für Wandzeitung', photo:'g2-e9-rubriken-wandzeitung.jpg'},
+          {label:'Box', note:'noch nicht vorhanden — evtl. gestrichen'},
+          {label:'Protokollbogen (KV10)'},
+        ]},
       ],
       '3. Klasse': [
-        {t:'Struktur und Aufbau der Hüttentage', p:69},
-        {t:'1. Einheit: Ankommen, Gruppenvereinbarung', p:71},
-        {t:'2. Einheit: Kooperative Spiele — Wir sind eine Gruppe', p:72},
-        {t:'3. Einheit: Darstellung, Theater, Improvisationen', p:75},
-        {t:'4. Einheit: Hörcollagen', p:76},
-        {t:'5. Einheit: Kochgruppe', p:77},
-        {t:'6. Einheit: Naturwahrnehmungsübungen', p:78},
-        {t:'7. Einheit: Nachtwanderung mit Lichterpfad (Abendeinheit A)', p:80},
-        {t:'8. Einheit: Lagerfeuer mit Stockbrot (Abendeinheit B)', p:81},
-        {t:'9. Einheit: Reflexion und weiterführende Aktivitäten für den Schulalltag', p:82},
+        {t:'1. Einheit: Ankommen, Gruppenvereinbarung', p:71, mat:[
+          {label:'4-Ecken-Markierung', photo:'g3-e1-4-ecken-markierung.jpg'},
+          {label:'Plakat & Schreibmaterial', bring:true},
+        ]},
+        {t:'2. Einheit: Kooperative Spiele — Wir sind eine Gruppe', p:72, mat:[
+          {label:'Augenbinde', note:'noch nicht vorhanden'},
+          {label:'Bilder Gruppenpuzzle', photo:'g3-e2-bilder-gruppenpuzzle.jpg'},
+          {label:'Redestein', photo:'g3-e2-redestein.jpg'},
+          {label:'Smiley Karten', photo:'g3-e2-smiley-karten.jpg'},
+          {label:'A3 Papier & Buntstifte', bring:true},
+          {label:'Musik (Handy)', bring:true},
+        ]},
+        {t:'3. Einheit: Darstellung, Theater, Improvisationen', p:75, noMaterial:true},
+        {t:'4. Einheit: Hörcollagen', p:76, mat:[
+          {label:'Aufnahmegerät (Handy)', bring:true},
+          {label:'Papier & Schreibzeug', bring:true},
+        ]},
+        {t:'5. Einheit: Kochgruppe', p:77, hinweis:'Nicht alle Rezepte lassen sich über einem Lagerfeuer kochen.', mat:[
+          {label:'Kindergerechte Rezepte', photo:'g3-e5-kindergerechte-rezepte.jpg'},
+          {label:'Küchensymbole (Gruppeneinteilung)', photo:'g3-e5-kuechensymbole.jpg'},
+          {label:'Schürzen & Küchenutensilien', bring:true},
+        ]},
+        {t:'6. Einheit: Naturwahrnehmungsübungen', p:78, mat:[
+          {label:'Verschiedene Tierkärtchen', photo:'g3-e6-tierkaertchen.jpg'},
+          {label:'Hörmemory mit Filmdöschen', photo:'g3-e6-hoermemory.jpg'},
+          {label:'Spiegelfliessen', note:'noch nicht vorhanden'},
+          {label:'Seil', note:'noch nicht vorhanden'},
+          {label:'Naturmaterial', bring:true},
+          {label:'Papier, Stifte & Kleber', bring:true},
+        ]},
+        {t:'7. Einheit: Nachtwanderung mit Lichterpfad (Abendeinheit A)', p:80, hinweis:'Alternative zur Nachtwanderung könnte ein blind zu begehender Pfad im / um das Schulhaus sein. Zwei Kinder arbeiten zusammen, immer jemand trägt die Augenbinde.', mat:[
+          {label:'Augenbinde', note:'noch nicht vorhanden'},
+        ]},
+        {t:'8. Einheit: Lagerfeuer mit Stockbrot (Abendeinheit B)', p:81, mat:[
+          {label:'Schnitzmesser', bring:true},
+          {label:'Stockbrotteig', bring:true},
+          {label:'Stöcke', bring:true},
+          {label:'Feuerzeug', bring:true},
+          {label:'Zeitung / Feuerstarter (evtl.)', bring:true},
+        ]},
+        {t:'9. Einheit: Reflexion und weiterführende Aktivitäten für den Schulalltag', p:82, mat:[
+          {label:'Papier, Schreibzeug & Kleber', bring:true},
+          {label:'Fotos der Hüttentage', bring:true},
+        ]},
       ],
       '4. Klasse': [
-        {t:'1. Einheit: Wenn ich mal nicht weiterweiss — Der Nachdenkstuhl', p:84},
-        {t:'2. Einheit: Wenn ich mal nicht weiterweiss — Probleme lösen', p:84},
-        {t:'3. Einheit: Wenn ich mal nicht weiterweiss — Der Moorpfad', p:86},
-        {t:'4. Einheit: Wenn ich mal nicht weiterweiss — Ich erzähl dir was!', p:87},
-        {t:'5. Einheit: Wenn ich mal nicht weiterweiss — Ich hör dir zu!', p:89},
-        {t:'6. Einheit: Wenn ich mal nicht weiterweiss — Minichaos', p:90},
-        {t:'7. Einheit: Wenn ich mal nicht weiterweiss — Experimente', p:91},
-        {t:'8. Einheit: Welch ein Stress — Stressabbau durch Bewegung', p:92},
-        {t:'9. Einheit: Welch ein Stress — Entspannung durch Fantasie', p:94},
-        {t:'10. Einheit: Abschlussstunde', p:96},
+        {t:'1. Einheit: Wenn ich mal nicht weiterweiss — Der Nachdenkstuhl', p:84, mat:[
+          {label:'Denkwolke & Glühbirne (KV11)'},
+          {label:'Denkwolke & Glühbirne', photo:'g4-e1-denkwolke-gluehbirne.jpg'},
+        ]},
+        {t:'2. Einheit: Wenn ich mal nicht weiterweiss — Probleme lösen', p:84, mat:[
+          {label:'Karten Problemsituationen', photo:'g4-e2-karten-problemsituationen.jpg'},
+          {label:'2 Handpuppen', note:'noch nicht vorhanden'},
+        ]},
+        {t:'3. Einheit: Wenn ich mal nicht weiterweiss — Der Moorpfad', p:86, mat:[
+          {label:'Teppichfliessen', note:'noch nicht vorhanden'},
+        ]},
+        {t:'4. Einheit: Wenn ich mal nicht weiterweiss — Ich erzähl dir was!', p:87, mat:[
+          {label:'Papier / Poster & Schreibmaterial', bring:true},
+        ]},
+        {t:'5. Einheit: Wenn ich mal nicht weiterweiss — Ich hör dir zu!', p:89, mat:[
+          {label:'Papier / Poster & Schreibmaterial', bring:true},
+        ]},
+        {t:'6. Einheit: Wenn ich mal nicht weiterweiss — Minichaos', p:90, mat:[
+          {label:'Mini Chaos (KV12)', alsoMaterial:'Karten Mini Chaos', photo:'g4-e6-karten-minichaos.jpg'},
+          {label:'Kamera / Abspielgerät (Handy)', bring:true},
+        ]},
+        {t:'7. Einheit: Wenn ich mal nicht weiterweiss — Experimente', p:91, mat:[
+          {label:'Experiment (KV13)'},
+          {label:'Stempelkissen', photo:'g4-e7-stempelkissen.jpg'},
+          {label:'Lupen', photo:'g4-e7-lupen.jpg'},
+          {label:'Einmal Handschuhe', photo:'g4-e7-einmalhandschuhe.jpg'},
+          {label:'Graphitpulver', note:'noch nicht vorhanden'},
+          {label:'Glasplatten', photo:'g4-e7-glasplatten.jpg'},
+          {label:'Weiche Pinsel', photo:'g4-e7-pinsel.jpg'},
+          {label:'Daumenabdruck (KV14)', alsoMaterial:'Karten Daumenabdruck', photo:'g4-e7-karten-daumenabdruck.jpg'},
+          {label:'Klebeband', bring:true},
+          {label:'ausreichend weisses Papier', bring:true},
+          {label:'Zeitung (Abdeckung)', bring:true},
+        ]},
+        {t:'8. Einheit: Welch ein Stress — Stressabbau durch Bewegung', p:92, mat:[
+          {label:'Spielkarten', photo:'g4-e8-spielkarten.jpg'},
+        ]},
+        {t:'9. Einheit: Welch ein Stress — Entspannung durch Fantasie', p:94, mat:[
+          {label:'Papier & Schreibmaterial', bring:true},
+        ]},
+        {t:'10. Einheit: Abschlussstunde', p:96, mat:[
+          {label:'ABC-Papier (KV15)'},
+          {label:'Schatzkästchen mit Spiegel', photo:'g4-e10-schatzkaestchen.jpg'},
+          {label:'Emotionskärtchen', photo:'g4-e10-emotionskaertchen.jpg'},
+          {label:'Poster & Schreibmaterial', bring:true},
+        ]},
       ],
     },
     'PRiS': {
       '5. Klasse': [
-        {t:'1. Einheit: Vorbereitung des Projekts'},
-        {t:'2. Einheit: Gefühle erkennen und benennen'},
-        {t:'3. Einheit: Gefühle äussern'},
-        {t:'4. Einheit: Wie sehe ich die anderen?'},
-        {t:'5. Einheit: Wie gehe ich mit anderen um?'},
-        {t:'6. Einheit: Wie werde ich von anderen wahrgenommen?'},
-        {t:'7. Einheit: Selbstdarstellung in digitalen sozialen Netzwerken'},
-        {t:'8. Einheit: Cyber-Mobbing'},
-        {t:'9. Einheit: Nein sagen im Netz'},
-        {t:'10. Einheit: Ich kann nicht … Ich möchte besser können …'},
-        {t:'11. Einheit: Mein Stärkenbuch'},
-        {t:'12. Einheit: Wie kann ich meinen Körper beherrschen?'},
-        {t:'13. Einheit: Kräfte messen'},
-        {t:'14. Einheit: Wie kann ich mich entspannen?'},
+        {t:'1. Einheit: Vorbereitung des Projekts', mat:[
+          {label:'Klebepunkte', photo:'p5-e1-klebepunkte.jpg'},
+          {label:'Stimmungs-Thermometer', photo:'p5-e1-stimmungs-thermometer.jpg'},
+          {label:'Stoffbeutel mit Gefühlskarten', photo:'p5-e1-stoffbeutel-gefuehlskarten.jpg'},
+          {label:'Schnur', photo:'p5-e1-schnur.jpg'},
+          {label:'Fotoapparat (Handy)', bring:true},
+          {label:'Musik (Handy)', bring:true},
+          {label:'unterschiedliches Papier (evtl. Zeitschriften zum Verzieren des Ordners & A4 / A3 Papier)', bring:true},
+          {label:'Ordner (o.ä. zum Ablegen der AB)', bring:true},
+        ]},
+        {t:'2. Einheit: Gefühle erkennen und benennen', mat:[
+          {label:'Gefühlskarten', photo:'p5-e2-gefuehlskarten-gelb.jpg'},
+        ]},
+        {t:'3. Einheit: Gefühle äussern', mat:[
+          {label:'Beispielkarten "Worte Erleben"', photo:'p5-e3-worte-erleben.jpg'},
+        ]},
+        {t:'4. Einheit: Wie sehe ich die anderen?', mat:[
+          {label:'Gefühlskarten', photo:'p5-e4-gefuehlskarten-blau.jpg'},
+        ]},
+        {t:'5. Einheit: Wie gehe ich mit anderen um?', noMaterial:true},
+        {t:'6. Einheit: Wie werde ich von anderen wahrgenommen?', mat:[
+          {label:'Pack- / Tapetenpapier', photo:'e2-papier.jpg'},
+        ]},
+        {t:'7. Einheit: Selbstdarstellung in digitalen sozialen Netzwerken', mat:[
+          {label:'Profil (KV2)'},
+          {label:'Fotoapparat (Handy)', bring:true},
+        ]},
+        {t:'8. Einheit: Cyber-Mobbing', mat:[
+          {label:'Let\'s fight it together (KV3)'},
+          {label:'QR-Code — «Let\'s Fight It Together» mit dt. Untertiteln', note:'Untertitel nicht 1:1 exakt', link:'https://www.youtube.com/watch?v=hYrDbGzZVUQ', available:true, photo:'e8-qr-untertitel.jpg'},
+          {label:'QR-Code — «Let\'s Fight It Together» Original Englisch', link:'https://www.youtube.com/watch?v=dubA2vhIlrg', available:true, photo:'e8-qr-englisch.jpg'},
+        ]},
+        {t:'9. Einheit: Nein sagen im Netz', mat:[
+          {label:'Video «Der verheimlichte Freund» (Sheeplive)', link:'https://www.schooltools.at/video/sheeplive-der-verheimlichte-freund/', available:true, photo:'e9-qr-verheimlichter-freund.jpg'},
+          {label:'Zettel', bring:true},
+        ]},
+        {t:'10. Einheit: Ich kann nicht … Ich möchte besser können …', mat:[
+          {label:'Ich kann … Ich möchte besser können … (KV4)'},
+        ]},
+        {t:'11. Einheit: Mein Stärkenbuch', mat:[
+          {label:'Stärkenbüchlein (KV5)'},
+          {label:'A5 Heft pro SuS'},
+        ]},
+        {t:'12. Einheit: Wie kann ich meinen Körper beherrschen?', mat:[
+          {label:'Stein (pro SuS)', bring:true},
+        ]},
+        {t:'13. Einheit: Kräfte messen', mat:[
+          {label:'Matten, Softbälle', note:'Durchführung in der Turnhalle'},
+        ]},
+        {t:'14. Einheit: Wie kann ich mich entspannen?', mat:[
+          {label:'Fantasiereise (KV6)'},
+        ]},
       ],
       '6. Klasse': [
-        {t:'1. Einheit: Ein positives Selbstwertgefühl entwickeln I'},
-        {t:'2. Einheit: Ein positives Selbstwertgefühl entwickeln II'},
-        {t:'3. Einheit: Was ich schon kann — was ich mir wünsche'},
-        {t:'4. Einheit: Was mir das Leben leichter macht'},
-        {t:'5. Einheit: Eigene Veränderungen wahrnehmen'},
-        {t:'6. Einheit: Gruppenprozesse anstossen'},
-        {t:'7. Einheit: Konflikte lösen I'},
-        {t:'8. Einheit: Konflikte lösen II'},
-        {t:'9. Einheit: Grenzen setzen'},
-        {t:'10. Einheit: Gruppendynamiken und Freundschaften'},
-        {t:'11. Einheit: Einigungsprozesse erzielen'},
-        {t:'12. Einheit: Was die Gruppe stärkt'},
-      ],
-      '7. Klasse': [
-        {t:'1. Einheit: Stärken stärken'},
-        {t:'2. Einheit: Meine Ziele — und wie ich sie erreichen kann'},
-        {t:'3. Einheit: Nur Mut!'},
-        {t:'4. Einheit: Probleme lösen'},
-        {t:'5. Einheit: Warum Vertrauen wichtig ist'},
-        {t:'6. Einheit: Wie ich richtig kommuniziere'},
-        {t:'7. Einheit: Gefühle wahrnehmen und ausdrücken'},
-        {t:'8. Einheit: Emotionen verbalisieren'},
-        {t:'9. Einheit: Warum Einigungsprozesse wichtig sind'},
-        {t:'10. Einheit: Gemeinsamkeiten entdecken — Unterschiede annehmen'},
-        {t:'11. Einheit: Umgang mit digitalen sozialen Medien I'},
-        {t:'12. Einheit: Umgang mit digitalen sozialen Medien II'},
-        {t:'13. Einheit: Umgang mit digitalen sozialen Medien III'},
-        {t:'14. Einheit: Sich selbst einschätzen — von anderen eingeschätzt werden'},
-      ],
-      '8. Klasse': [
-        {t:'1. Einheit: Wer bin ich?'},
-        {t:'2. Einheit: Meine Interessen und Ziele'},
-        {t:'3. Einheit: Im Gespräch überzeugen'},
-        {t:'4. Einheit: Selbstsicher auftreten'},
-        {t:'5. Einheit: Projektarbeit I'},
-        {t:'6. Einheit: Projektarbeit II'},
-        {t:'7. Einheit: Seelischer Gewalt vorbeugen: Cyber-Mobbing'},
-        {t:'8. Einheit: Teamgeist'},
-        {t:'9. Einheit: Rollen- und Geschlechtsklischees'},
-        {t:'10. Einheit: Konflikte mit Eltern — Eltern verstehen'},
-        {t:'11. Einheit: Begegnungen vorbereiten'},
-        {t:'12. Einheit: Begegnung präsentieren und reflektieren'},
-        {t:'13. Einheit: Prüfungsangst und -stress'},
-        {t:'14. Einheit: Selbst- und Zeitmanagement'},
-      ],
-      '9. Klasse': [
-        {t:'1. Einheit: Ein Blick in die Zukunft'},
-        {t:'2. Einheit: Ein Blick auf die eigenen Stärken'},
-        {t:'3. Einheit: Teamkompetenz'},
-        {t:'4. Einheit: Zivilcourage zeigen!'},
-        {t:'5. Einheit: Emotionen regulieren'},
-        {t:'6. Einheit: Teamgeist'},
-        {t:'7. Einheit: Foto-Story I'},
-        {t:'8. Einheit: Foto-Story II'},
-        {t:'9. Einheit: Abschied und Chance?'},
-        {t:'10. Einheit: Abschlusseinheit'},
+        {t:'1. Einheit: Ein positives Selbstwertgefühl entwickeln I', mat:[
+          {label:'Wortkarte "Wahrnehmen"', photo:'p6-e1-wortkarte-wahrnehmen.jpg'},
+          {label:'4 Satzkärtchen', note:'noch nicht vorhanden', sub:[
+            {label:'"Ich beobachte mich." (Stufe 1: neutrales Beobachten)'},
+            {label:'"Ich entdecke etwas an mir." (Stufe 2: aktives Entdecken)'},
+            {label:'"Ich bemerke etwas Besonderes an mir." (Stufe 3: gezieltes Bemerken)'},
+            {label:'"Ich nehme die Wahrheit über mich zur Kenntnis." (Stufe 4: bewusstes Anerkennen)'},
+          ]},
+        ]},
+        {t:'2. Einheit: Ein positives Selbstwertgefühl entwickeln II', mat:[
+          {label:'Wer bin ich? I & II (KV7)'},
+          {label:'Gefühlskarten', mark:'Foto / Farbe noch klären'},
+        ]},
+        {t:'3. Einheit: Was ich schon kann — was ich mir wünsche', mat:[
+          {label:'Foto der einzelnen Schüler:innen', bring:true},
+          {label:'Stärkenbüchlein / Papier', bring:true},
+        ]},
+        {t:'4. Einheit: Was mir das Leben leichter macht', mat:[]},
+        {t:'5. Einheit: Eigene Veränderungen wahrnehmen', mat:[
+          {label:'kleiner Ball', photo:'e5-ball.jpg'},
+        ]},
+        {t:'6. Einheit: Gruppenprozesse anstossen', mat:[
+          {label:'Markierungen für die 4 Ecken (farbige Nummern)', photo:'g3-e1-4-ecken-markierung.jpg'},
+          {label:'Gruppeneinteilung (KV8)', alsoMaterial:'Kärtchen Gruppeneinteilung', photo:'p6-e6-gruppeneinteilung.jpg'},
+          {label:'Baumaterial: Holzspiesse & Plastilin', photo:'e6-baumaterial.jpg'},
+        ]},
+        {t:'7. Einheit: Konflikte lösen I', mat:[
+          {label:'Beispielkärtchen "Was mich wütend macht"', photo:'p6-e7-was-mich-wuetend-macht.jpg'},
+        ]},
+        {t:'8. Einheit: Konflikte lösen II', mat:[
+          {label:'Konfliktbeobachtung (KV9)'},
+          {label:'Rollenspielkarten "Konfliktsituationen"', photo:'p6-e8-rollenspielkarten.jpg'},
+          {label:'Flipchart (auch mit WT oder digital möglich)', bring:true},
+          {label:'Musik (Handy oder CD)', bring:true},
+        ]},
+        {t:'9. Einheit: Grenzen setzen', mat:[]},
+        {t:'10. Einheit: Gruppendynamiken und Freundschaften', mat:[
+          {label:'Stärkenbüchlein / Papier', bring:true},
+          {label:'Kärtchen "Mögliche Konfliktsituationen im Freundeskreis"', photo:'p6-e10-konfliktsituationen-freundeskreis.jpg'},
+          {label:'Leitfragen Rollenspielauswertung', photo:'p6-e10-leitfragen-rollenspiel.jpg'},
+        ]},
+        {t:'11. Einheit: Einigungsprozesse erzielen', mat:[
+          {label:'Klappmeter (ersetzt Holzstab)', photo:'e11-klappmeter.jpg'},
+        ]},
+        {t:'12. Einheit: Was die Gruppe stärkt', noMaterial:true},
       ],
     }
   };
@@ -570,33 +693,38 @@
       '1. Klasse': [],
       '2. Klasse': [
         {title:'Annika lernt schwimmen', einheit:1},
+        {title:'Märchen Swabedoo', einheit:3},
         {title:'Zaubermeister Xurubu', einheit:4},
         {title:'Kindermutmachlied', einheit:5},
-        {title:'die Reise in die Natur', einheit:7},
+        {title:'Die Reise in die Natur', einheit:7},
       ],
       '3. Klasse': [
-        {title:'Beispielgeschichte Bewegungsimitation'},
-        {title:'Gemeinschaftsbilder'},
-        {title:'Kochrezepte 3.Kl'},
-        {title:'Tierkarten'},
+        {title:'Fantasiegeschichte', einheit:3},
+        {title:'Beispielgeschichte Bewegungsimitation', einheit:3},
       ],
       '4. Klasse': [
-        {title:'Problemgeschichte', einheit:2},
+        {title:'Problemgeschichte', einheit:1},
+        {title:'Anleitung Moorpfadspiel', einheit:3},
         {title:'das Regenspiel', einheit:8},
         {title:'der Zauberteppich', einheit:9},
       ],
     },
     'PRiS': {
       '5. Klasse': [
-        {title:'Gefühlekärtchen 5./6.'},
+        {title:'Was ist gut daran, verschieden zu sein?', einheit:5, type:'AB'},
+        {title:'Das fängt gut an', einheit:12},
       ],
       '6. Klasse': [
-        {title:'Gefühlekärtchen 5./6.'},
-        {title:'Ich über mich I', einheit:1},
-        {title:'Ich über mich II', einheit:1},
+        {title:'Ich über mich I', einheit:1, type:'AB'},
+        {title:'Ich über mich II', einheit:1, type:'AB'},
+        {title:'Die Zeitmaschine', einheit:2},
         {title:'Fantasiereise mit Stationen meines Lebens', einheit:4},
-        {title:'Bilanzbogen', einheit:6},
-        {title:'Fragebogen', einheit:9},
+        {title:'Lerntypentest', einheit:4, type:'AB'},
+        {title:'Früher und heute — Beispielgedicht', einheit:5, type:'AB'},
+        {title:'Bilanzbogen', einheit:6, type:'AB'},
+        {title:'Fragebogen', einheit:9, type:'AB'},
+        {title:'Was macht eine Gruppe und Freundschaft für mich aus?', einheit:10, type:'AB'},
+        {title:'Gemeinsames und Unterschiede', einheit:11, type:'AB'},
       ],
     }
   };
@@ -631,18 +759,89 @@
     }
   }
 
+  const zusatzIconNoten = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+  const zusatzIconStift = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3l7 7-9 9H5v-7z"/><path d="M13 4l7 7"/></svg>';
+
   function renderZusatz(lehrmittel, klasse){
     const wrap = document.getElementById('zusatzList');
     const list = zusatzData[lehrmittel] && zusatzData[lehrmittel][klasse];
+    const allAB = list && list.length && list.every(item => item.type === 'AB');
+    const heading = allAB ? 'Zusätzliche Arbeitsblätter' : 'Geschichten / Lieder / zusätzliche AB';
+    const accLabel = document.getElementById('zusatzAccLabel');
+    const sectionTitle = document.getElementById('zusatzSectionTitle');
+    const accIcon = document.getElementById('zusatzAccIcon');
+    if(accLabel) accLabel.textContent = heading;
+    if(sectionTitle) sectionTitle.textContent = heading;
+    if(accIcon) accIcon.innerHTML = allAB ? zusatzIconStift : zusatzIconNoten;
     if(list === undefined){
       wrap.innerHTML = '<p class="zusatz-tbd">Noch zu ergänzen.</p>';
     } else if(list.length === 0){
       wrap.innerHTML = '<p class="zusatz-empty">—</p>';
     } else {
-      wrap.innerHTML = '<ul class="zusatz-list">' + list.map(item =>
+      const renderZusatzItems = (items) => '<ul class="zusatz-list">' + items.map(item =>
         `<li>${item.title}${item.einheit ? ' <span class="einheit-tag">Einheit '+item.einheit+'</span>' : ''}</li>`
       ).join('') + '</ul>';
+      const geschichten = list.filter(item => item.type !== 'AB');
+      const abs = list.filter(item => item.type === 'AB');
+      let html = '';
+      if(geschichten.length){
+        html += (geschichten.length && abs.length ? '<h4>Geschichten</h4>' : '') + renderZusatzItems(geschichten);
+      }
+      if(abs.length){
+        html += (geschichten.length && abs.length ? '<h4>Zusätzliche Arbeitsblätter</h4>' : '') + renderZusatzItems(abs);
+      }
+      wrap.innerHTML = html;
     }
+  }
+
+  // Allgemeiner Hinweis auf Klassenebene (z. B. Standardmaterial, das nicht
+  // bei jeder Einheit einzeln aufgeführt werden muss). Nur eintragen, wo nötig.
+  const klassenHinweise = {
+    'PRiS': {
+      '5. Klasse': [
+        'Schreibzeug und Papier bringen die SuS grundsätzlich selbst mit — werden deshalb nicht bei jeder Einheit einzeln aufgeführt.',
+      ],
+      '6. Klasse': [
+        'Schreibzeug und Papier bringen die SuS grundsätzlich selbst mit — werden deshalb nicht bei jeder Einheit einzeln aufgeführt.',
+        'Wo "Stärkenbüchlein / Papier" als Material steht, kann wahlweise im Stärkenbüchlein oder auf Papier gearbeitet werden.',
+      ],
+    },
+    'PRiGS': {
+      '3. Klasse': [
+        'Die meisten Einheiten können im Waldschulzimmer durchgeführt werden.',
+        'Während den Aktivitäten sollten immer wieder Fotos gemacht werden (werden in der Einheit 9 gebraucht).',
+      ],
+    }
+  };
+  function renderKlassenHinweis(lehrmittel, klasse){
+    const el = document.getElementById('klassenHinweis');
+    if(!el) return;
+    const hinweise = klassenHinweise[lehrmittel] && klassenHinweise[lehrmittel][klasse];
+    el.innerHTML = (hinweise && hinweise.length)
+      ? '<div><strong>Hinweis:</strong></div>' + hinweise.map(txt => `<div>${txt}</div>`).join('')
+      : '';
+  }
+
+  // Reflexions- und Moderationsobjekte: die Basis-Objekte gelten für alle Klassen,
+  // pro Klasse können zusätzliche, spezifische Objekte dazukommen.
+  const reflexionsObjekteBase = [
+    {title:'Säckchen mit Redestein', desc:'Nur wer den Stein hält, darf sprechen — für geordnete Gesprächs- und Feedbackrunden.'},
+    {title:'Reflexions-Keksdose', desc:'Hat oben einen grünen und unten einen roten Kreis. Die Dose wird herumgegeben, und die Kinder sprechen etwas Positives (grün) oder Negatives (rot) hinein.'},
+    {title:'Wunschkerze', desc:'Wer die Kerze hält, wünscht seinem Nachbarn/seiner Nachbarin etwas Schönes für den Tag.'},
+  ];
+  const reflexionsObjekteKlasse = {
+    'PRiS': {
+      '5. Klasse': [
+        {title:'Stimmungs-Thermometer', desc:'Laminiertes Thermometer-Plakat mit Smiley-Skala an der Wandtafel. Alle SuS schreiben ihren Namen auf einen Klebepunkt und markieren damit einen Magneten. Dieser wird zu Beginn und am Ende jeder Einheit je nach aktueller Stimmung auf dem Thermometer platziert.'},
+      ],
+    },
+  };
+  function renderReflexionsobjekte(lehrmittel, klasse){
+    const wrap = document.getElementById('reflexionsList');
+    if(!wrap) return;
+    const extra = (reflexionsObjekteKlasse[lehrmittel] && reflexionsObjekteKlasse[lehrmittel][klasse]) || [];
+    const all = reflexionsObjekteBase.concat(extra);
+    wrap.innerHTML = all.map(o => `<div class="refl-item"><div class="txt"><strong>${o.title}</strong><span>${o.desc}</span></div></div>`).join('');
   }
 
   function renderUnits(lehrmittel, klasse){
@@ -658,7 +857,9 @@
       const d = document.createElement('details');
       d.className = 'unit';
       let bodyHtml;
-      if(u.mat){
+      if(u.noMaterial){
+        bodyHtml = '<p style="font-size:13.5px; color:var(--ink-soft); margin:0;">Kein Material notwendig</p>';
+      } else if(u.mat){
         const {material, bring, kv} = splitMat(u.mat);
         const materialHtml = material.length
           ? '<div class="mat-group mat-group-material"><h4>Material Kiste</h4><ul class="mat-list">' + material.map(m => renderMatItem(m)).join('') + '</ul></div>'
@@ -667,9 +868,9 @@
           ? '<div class="mat-group mat-group-bring"><h4>Selbst mitbringen</h4><ul class="mat-list">' + bring.map(m => `<li class="mat-item flat">${m.short || m.label}</li>`).join('') + '</ul></div>'
           : '';
         const kvHtml = kv.length
-          ? '<h4>Kopiervorlagen</h4><ul class="mat-list">' + kv.map(k => `<li class="mat-item flat">KV${k.num} — ${k.label}${k.alsoMaterial ? ' <span class="printed-tag">bereits als Karten vorhanden</span>' : ''}</li>`).join('') + '</ul>'
+          ? '<h4>Kopiervorlagen</h4><ul class="mat-list">' + kv.map(k => `<li class="mat-item flat">KV${k.num} — ${k.label}${k.alsoMaterial ? ` <span class="printed-tag">${k.printedNote || 'bereits als Karten vorhanden'}</span>` : ''}</li>`).join('') + '</ul>'
           : '';
-        bodyHtml = materialHtml + bringHtml + kvHtml;
+        bodyHtml = (materialHtml + bringHtml + kvHtml) || '<p style="font-size:13.5px; color:var(--ink-soft); margin:0;">Kein Material notwendig</p>';
       } else {
         bodyHtml = '<h4>Material Kiste</h4><p style="font-size:13.5px; color:var(--ink-soft); margin:0;">Noch zu ergänzen.</p>';
       }
@@ -678,11 +879,15 @@
       const numMatch = u.t.match(/^(\d+)\./);
       const unitNum = numMatch ? Number(numMatch[1]) : null;
       const matchingZusatz = (unitNum && zusatzList) ? zusatzList.filter(z => z.einheit === unitNum) : [];
+      const zusatzAlleAB = matchingZusatz.length && matchingZusatz.every(z => z.type === 'AB');
+      const zusatzHeading = zusatzAlleAB ? 'Zusätzliche Arbeitsblätter' : 'Geschichte / Lied / AB';
       const zusatzHtml = matchingZusatz.length
-        ? `<h4>Geschichte / Lied / AB</h4><ul class="mat-list">${matchingZusatz.map(z => `<li class="mat-item flat">${z.title}</li>`).join('')}</ul>`
+        ? `<h4>${zusatzHeading}</h4><ul class="mat-list">${matchingZusatz.map(z => `<li class="mat-item flat">${z.title}</li>`).join('')}</ul>`
         : '';
+      const hinweisHtml = u.hinweis ? `<div class="unit-hinweis"><strong>Hinweis:</strong> ${u.hinweis}</div>` : '';
       d.innerHTML = `<summary>${u.t}${u.p ? ' <span class="pageref">S. '+u.p+'</span>' : ''}</summary>
         <div class="inner">
+          ${hinweisHtml}
           ${bodyHtml}
           ${zusatzHtml}
         </div>`;
@@ -702,7 +907,7 @@
       if(kvMatch && !m.bring){
         const num = kvMatch[1];
         const base = label.replace(/\(KV\d+\)/i,'').replace(/pro Kind/i,'').trim();
-        kv.push({num, label: base, alsoMaterial: m.alsoMaterial});
+        kv.push({num, label: base, alsoMaterial: m.alsoMaterial, printedNote: m.printedNote});
         if(m.alsoMaterial){ material.push({label: m.alsoMaterial, photo: m.photo, photoPending: m.photoPending}); }
         return;
       }
@@ -714,14 +919,15 @@
 
   function renderMatItem(m){
     const bringTag = m.bring ? ' <span class="bring-tag">selbst mitbringen</span>' : '';
-    const noteTag = m.note ? ` <span class="note-tag">${m.note}</span>` : '';
+    const noteTag = (m.note || m.mark) ? ` <span class="note-tag">${m.note || m.mark}</span>` : '';
+    const linkHtml = m.link ? `<br><a href="${m.link}" target="_blank" rel="noopener" class="mat-link">${m.link}</a>` : '';
     const thumb = m.photo
       ? `<div class="mat-thumb"><img class="zoomable" src="bilder/${m.photo}" alt="${m.label}"></div>`
       : (m.photoPending ? `<div class="mat-thumb-pending">Bild<br>folgt</div>` : '');
-    const noteClass = m.note ? ' note-bg' : '';
+    const noteClass = m.available ? ' available-bg' : ((m.note || m.mark) ? ' note-bg' : '');
     const hasVisual = m.photo || m.photoPending;
     if(m.sub){
-      const subHtml = `<span class="mat-label">${m.label}</span>
+      const subHtml = `<span class="mat-label">${m.label}${noteTag}</span>
         <ul class="mat-sub">${m.sub.map(s => `<li${s.bring ? ' class="bring-sub"' : (s.note ? ' class="note-sub"' : '')}>${s.label}${s.bring ? ' <span class="bring-tag">selbst mitbringen</span>' : ''}${s.note ? ` <span class="note-tag">${s.note}</span>` : ''}</li>`).join('')}</ul>`;
       if(hasVisual){
         return `<li class="mat-item mat-item-photo${noteClass}"><div class="mat-text">${subHtml}</div>${thumb}</li>`;
@@ -729,19 +935,71 @@
       return `<li class="mat-item${noteClass}">${subHtml}</li>`;
     }
     if(hasVisual){
-      return `<li class="mat-item mat-item-photo flat${noteClass}"><div class="mat-text">${m.label}${bringTag}${noteTag}</div>${thumb}</li>`;
+      return `<li class="mat-item mat-item-photo flat${noteClass}"><div class="mat-text">${m.label}${bringTag}${noteTag}${linkHtml}</div>${thumb}</li>`;
     }
-    return `<li class="mat-item flat${noteClass}">${m.label}${bringTag}${noteTag}</li>`;
+    return `<li class="mat-item flat${noteClass}">${m.label}${bringTag}${noteTag}${linkHtml}</li>`;
   }
 
   // Baut die Gesamtliste der Kiste aus den Einheiten-Materialien: nur was tatsächlich
   // IN der Kiste liegt (nicht "selbst mitbringen"), ohne Beispiele/Zusätze (die stehen
   // bei der jeweiligen Einheit). Kopiervorlagen (KVn) werden separat gesammelt, inkl.
   // der Einheit, aus der sie stammen (für die Kopiervorlagen-Übersicht).
+  // Papier-/Kärtchen-Material: kommt in der Gesamtliste ans Ende statt alphabetisch/nach Reihenfolge dazwischen.
+  const PAPIER_ITEMS = new Set([
+    'Wortkarte "Wahrnehmen"',
+    '4 Satzkärtchen',
+    'Gefühlskarten',
+    'Markierungen für die 4 Ecken',
+    'Kärtchen Gruppeneinteilung',
+    'Beispielkärtchen "Was mich wütend macht"',
+    'Kärtchen mit Konfliktsituationen',
+    'Rollenspielkarten "Konfliktsituationen"',
+    'Kärtchen "Mögliche Konfliktsituationen im Freundeskreis"',
+    'Leitfragen Rollenspielauswertung',
+    // PRiGS 2. Klasse
+    'Karten Geschichte Zauberer Xurubu',
+    'Rubriken für Wandzeitung',
+    'Emotionskärtchen',
+    // PRiGS 3. Klasse
+    '4-Ecken-Markierung',
+    'Bilder Gruppenpuzzle',
+    'Smiley Karten',
+    'Fantasiegeschichte',
+    'Kindergerechte Rezepte',
+    'Küchensymbole',
+    'Verschiedene Tierkärtchen',
+    // PRiGS 4. Klasse
+    'Denkwolke & Glühbirne',
+    'Karten Problemsituationen',
+    'Karten Mini Chaos',
+    'Karten Daumenabdruck',
+    'Spielkarten',
+    // PRiS 5. Klasse
+    'Stimmungs-Thermometer',
+    'Beispielkarten "Worte Erleben"',
+    // PRiS 5. Klasse (QR-Codes sind Ausdrucke)
+    'QR-Code — «Let\'s Fight It Together» Original Englisch',
+    'Video «Der verheimlichte Freund»',
+    // PRiGS 1. Klasse
+    'Einstiegsgeschichte',
+    'Reflexionskarten',
+    'Karten Situationsfotos',
+    'Karten Gesichter',
+    'Farbige Plakate A3',
+    'Fantasiereise in die Natur',
+  ]);
+
+  const EXTRA_KV = {
+    'PRiS': {
+      '5. Klasse': [{num:1, label:'Emoticon-Kärtchen', tag:'individueller Einsatz'}],
+    }
+  };
+
   function buildGesamtliste(lehrmittel, klasse){
     const units = unitsData[lehrmittel] && unitsData[lehrmittel][klasse];
     if(!units) return null;
     const matSet = new Set();
+    const matSetLam = new Set();
     const kvMap = new Map();
     units.forEach(u=>{
       if(!u.mat) return;
@@ -755,19 +1013,32 @@
           const num = kvMatch[1];
           let base = label.replace(/\(KV\d+\)/i,'').replace(/pro Kind/i,'').trim();
           if(!kvMap.has(num)) kvMap.set(num, {label: base, einheit: unitNum, alsoMaterial: m.alsoMaterial});
-          if(m.alsoMaterial) matSet.add(m.alsoMaterial);
+          if(m.alsoMaterial){
+            if(PAPIER_ITEMS.has(m.alsoMaterial)) matSetLam.add(m.alsoMaterial); else matSet.add(m.alsoMaterial);
+          }
           return;
         }
         let cleaned = label.replace(/\([^)]*\)/g,'').replace(/pro Kind/i,'').trim();
-        if(cleaned) matSet.add(cleaned);
+        const isLam = PAPIER_ITEMS.has(cleaned) || PAPIER_ITEMS.has(label);
+        if(cleaned){
+          if(isLam) matSetLam.add(cleaned); else matSet.add(cleaned);
+        }
       });
     });
-    const matLines = Array.from(matSet);
+    // Kopiervorlagen ohne feste Einheit ("individueller Einsatz")
+    const extraKv = (EXTRA_KV[lehrmittel] && EXTRA_KV[lehrmittel][klasse]) || [];
+    extraKv.forEach(k=>{ if(!kvMap.has(String(k.num))) kvMap.set(String(k.num), {label:k.label, tag:k.tag}); });
+    // Objekte zuerst, laminierte Sachen (Kärtchen, Karten usw.) am Schluss.
+    const matLines = Array.from(matSet).concat(
+      Array.from(matSetLam)
+    );
     const kvLines = Array.from(kvMap.entries())
       .sort((a,b) => Number(a[0]) - Number(b[0]))
-      .map(([num,info]) => `KV${num} — ${info.label}${info.einheit ? ' <span class="einheit-tag">Einheit '+info.einheit+'</span>' : ''}`);
+      .map(([num,info]) => `KV${num} — ${info.label}${info.einheit ? ' <span class="einheit-tag">Einheit '+info.einheit+'</span>' : (info.tag ? ' <span class="einheit-tag">'+info.tag+'</span>' : '')}`);
     return { mat: matLines, kv: kvLines };
   }
+
+  const g=buildGesamtliste('PRiS','5. Klasse');console.log(g.kv,g.mat.length);console.log(JSON.stringify(unitsData.PRiS['5. Klasse'][13]));console.log(JSON.stringify(zusatzData.PRiGS['3. Klasse']))
 
   function renderGesamtliste(lehrmittel, klasse){
     const ul = document.getElementById('gesamtlisteList');
@@ -819,22 +1090,9 @@
     grid.innerHTML = '';
     grid.classList.remove('twocol', 'stufe-grid');
 
-    if(selected.lehrmittel === 'PRiS' && !selected.stufe){
-      label.textContent = 'Schritt 2 — Stufe';
-      grid.classList.add('stufe-grid');
-      Object.keys(prisStufen).forEach(stufeName=>{
-        const btn = document.createElement('button');
-        btn.className = 'choice-card klasse-card stufe-card';
-        btn.innerHTML = stufeName + '<span class="sub">' + prisStufen[stufeName].join(', ') + '</span>';
-        btn.onclick = () => selectStufe(stufeName);
-        grid.appendChild(btn);
-      });
-      return;
-    }
-
-    label.textContent = selected.lehrmittel === 'PRiS' ? 'Schritt 3 — Klasse' : 'Schritt 2 — Klasse';
-    if(selected.lehrmittel === 'PRiGS') grid.classList.add('twocol');
-    const list = selected.lehrmittel === 'PRiS' ? prisStufen[selected.stufe] : klassen[selected.lehrmittel];
+    label.textContent = 'Schritt 2 — Klasse';
+    if(selected.lehrmittel === 'PRiGS' || selected.lehrmittel === 'PRiS') grid.classList.add('twocol');
+    const list = klassen[selected.lehrmittel];
     list.forEach(k=>{
       const btn = document.createElement('button');
       btn.className = 'choice-card klasse-card';
@@ -844,31 +1102,14 @@
     });
   }
 
-  function selectStufe(name){
-    selected.stufe = name;
-    selected.klasse = null;
-    document.getElementById('chipStufe').classList.remove('hidden');
-    document.getElementById('chipStufe').innerHTML = name + ' <button onclick="backToStufe()">↺</button>';
-    document.getElementById('chipKlasse').classList.add('hidden');
-    renderStep2();
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
   function selectKlasse(k){
     selected.klasse = k;
-    // Deep-Link direkt zu einer PRiS-Klasse (z. B. per QR-Code): Stufe automatisch ableiten
-    if(selected.lehrmittel === 'PRiS' && !selected.stufe){
-      const s = stufeForKlasse(k);
-      if(s){
-        selected.stufe = s;
-        document.getElementById('chipStufe').classList.remove('hidden');
-        document.getElementById('chipStufe').innerHTML = s + ' <button onclick="backToStufe()">↺</button>';
-      }
-    }
     document.getElementById('step-klasse').classList.add('hidden');
     document.getElementById('chipKlasse').classList.remove('hidden');
     document.getElementById('chipKlasse').innerHTML = k + ' <button onclick="backToKlasse()">↺</button>';
     renderKistenFoto(selected.lehrmittel, k);
+    renderKlassenHinweis(selected.lehrmittel, k);
+    renderReflexionsobjekte(selected.lehrmittel, k);
     renderUnits(selected.lehrmittel, k);
     renderGesamtliste(selected.lehrmittel, k);
     renderKvList(selected.lehrmittel, k);
@@ -887,17 +1128,6 @@
     document.getElementById('step-klasse').classList.add('hidden');
     document.getElementById('content').classList.add('hidden');
     document.getElementById('step-lehrmittel').classList.remove('hidden');
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  function backToStufe(){
-    selected.stufe = null;
-    selected.klasse = null;
-    document.getElementById('chipStufe').classList.add('hidden');
-    document.getElementById('chipKlasse').classList.add('hidden');
-    document.getElementById('content').classList.add('hidden');
-    renderStep2();
-    document.getElementById('step-klasse').classList.remove('hidden');
     window.scrollTo({top:0, behavior:'smooth'});
   }
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StaFF Materialkisten — Schule Felsberg</title>
+<title>StaFF Materialkisten — Kindergarten (PRiK)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@600;700;800&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
@@ -21,6 +21,7 @@
     --accent-tint: #FBF3DE;
     --card-bg: #EDBE55;
   }
+  html[data-theme="PRiK"]{ --accent:#E2762E; --accent-deep:#2B4A66; --accent-tint:#FCECDF; --card-bg:#E2A467; }
   html[data-theme="PRiGS"]{ --accent:#F0B429; --accent-deep:#332F63; --accent-tint:#FBF3DE; --card-bg:#EDBE55; }
   html[data-theme="PRiS"]{ --accent:#D89A1E; --accent-deep:#2A2352; --accent-tint:#F5E6C4; --card-bg:#DFAE3E; }
 
@@ -234,16 +235,6 @@
     <span class="chip hidden" id="chipKlasse"></span>
   </div>
 
-  <!-- SCHRITT 1: Lehrmittel -->
-  <div id="step-lehrmittel">
-    <div class="choice-grid triangle">
-      <button class="choice-card" onclick="selectLehrmittel('PRiGS')">PRiGS
-        <span class="sub">1.–4. Klasse</span></button>
-      <button class="choice-card" onclick="selectLehrmittel('PRiS')">PRiS
-        <span class="sub">5.–6. Klasse</span></button>
-    </div>
-  </div>
-
   <!-- SCHRITT 2: Stufe (nur PRiS) / Klasse -->
   <div id="step-klasse" class="hidden">
     <p class="step-label" id="stepLabel">Schritt 2 — Klasse</p>
@@ -362,8 +353,7 @@
   const EXTRA_KV = {};
   const PAPIER_ITEMS = new Set();
 </script>
-<script src="daten/prigs.js"></script>
-<script src="daten/pris.js"></script>
+<script src="daten/prik.js"></script>
 <script>
   // klassen: siehe daten/*.js
 
@@ -568,48 +558,9 @@
   // bei der jeweiligen Einheit). Kopiervorlagen (KVn) werden separat gesammelt, inkl.
   // der Einheit, aus der sie stammen (für die Kopiervorlagen-Übersicht).
   // Papier-/Kärtchen-Material: kommt in der Gesamtliste ans Ende statt alphabetisch/nach Reihenfolge dazwischen.
+  // Papierige Sachen (Karten, Kärtchen, Ausdrucke), die in der Gesamtliste ans Ende kommen sollen:
   [
-    'Wortkarte "Wahrnehmen"',
-    '4 Satzkärtchen',
-    'Gefühlskarten',
-    'Markierungen für die 4 Ecken',
-    'Kärtchen Gruppeneinteilung',
-    'Beispielkärtchen "Was mich wütend macht"',
-    'Kärtchen mit Konfliktsituationen',
-    'Rollenspielkarten "Konfliktsituationen"',
-    'Kärtchen "Mögliche Konfliktsituationen im Freundeskreis"',
-    'Leitfragen Rollenspielauswertung',
-    // PRiGS 2. Klasse
-    'Karten Geschichte Zauberer Xurubu',
-    'Rubriken für Wandzeitung',
-    'Emotionskärtchen',
-    // PRiGS 3. Klasse
-    '4-Ecken-Markierung',
-    'Bilder Gruppenpuzzle',
-    'Smiley Karten',
-    'Fantasiegeschichte',
-    'Kindergerechte Rezepte',
-    'Küchensymbole',
-    'Verschiedene Tierkärtchen',
-    // PRiGS 4. Klasse
-    'Denkwolke & Glühbirne',
-    'Karten Problemsituationen',
-    'Karten Mini Chaos',
-    'Karten Daumenabdruck',
-    'Spielkarten',
-    // PRiS 5. Klasse
-    'Stimmungs-Thermometer',
-    'Beispielkarten "Worte Erleben"',
-    // PRiS 5. Klasse (QR-Codes sind Ausdrucke)
-    'QR-Code — «Let\'s Fight It Together» Original Englisch',
-    'Video «Der verheimlichte Freund»',
-    // PRiGS 1. Klasse
-    'Einstiegsgeschichte',
-    'Reflexionskarten',
-    'Karten Situationsfotos',
-    'Karten Gesichter',
-    'Farbige Plakate A3',
-    'Fantasiereise in die Natur',
+    // 'Name des Materials',
   ].forEach(x => PAPIER_ITEMS.add(x));
 
   // EXTRA_KV: siehe daten/*.js
@@ -688,9 +639,9 @@
     document.getElementById('eyebrow').textContent = 'StaFF · ' + name + ' — Materialkisten';
 
     // Schritt 1 ausblenden, Chip zeigen
-    document.getElementById('step-lehrmittel').classList.add('hidden');
+    
     document.getElementById('summaryBar').classList.remove('hidden');
-    document.getElementById('chipLehrmittel').innerHTML = name + ' <button onclick="backToLehrmittel()">↺</button>';
+    document.getElementById('chipLehrmittel').innerHTML = name;
     document.getElementById('chipStufe').classList.add('hidden');
     document.getElementById('chipKlasse').classList.add('hidden');
 
@@ -787,15 +738,10 @@
   // und springt direkt zur passenden Kiste. Alle Navigations-/Zurück-Buttons
   // bleiben danach normal aktiv, damit man trotzdem andere Klassen ansehen kann.
   (function initFromUrl(){
-    const params = new URLSearchParams(window.location.search);
-    const lehrmittel = params.get('lehrmittel');
-    const klasse = params.get('klasse');
-    if(lehrmittel && klassen[lehrmittel]){
-      selectLehrmittel(lehrmittel);
-      if(klasse && klassen[lehrmittel].includes(klasse)){
-        selectKlasse(klasse);
-      }
-    }
+    // Diese Seite zeigt nur den Kindergarten: Lehrmittel PRiK ist immer gewählt.
+    selectLehrmittel('PRiK');
+    const klasse = new URLSearchParams(window.location.search).get('klasse');
+    if(klasse && klassen.PRiK.includes(klasse)){ selectKlasse(klasse); }
   })();
 </script>
 

@@ -69,7 +69,7 @@ unitsData.PRiS = {
     ]},
     {t:'2. Einheit: Ein positives Selbstwertgefühl entwickeln II', mat:[
       {label:'Wer bin ich? I & II (KV7)'},
-      {label:'Gefühlskarten', mark:'Foto / Farbe noch klären'},
+      {label:'Gefühlskarten', photo:'p5-e2-gefuehlskarten-gelb.jpg'},
     ]},
     {t:'3. Einheit: Was ich schon kann — was ich mir wünsche', mat:[
       {label:'Foto der einzelnen Schüler:innen', bring:true},

@@ -172,6 +172,8 @@
   .mat-sub li{ font-size:13px; color: var(--ink-soft); padding:3px 0 3px 10px; }
   .mat-sub li.bring-sub{ background:#FBE9E9; border-radius:6px; padding:4px 10px; margin:2px 0; }
   .mat-sub li.note-sub{ background:#FBE9E9; border-radius:6px; padding:4px 10px; margin:2px 0; }
+  .mat-sub li.has-photo{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .mat-sub li.has-photo .mat-thumb{ margin-top:0; }
   .mat-list > .mat-item.note-bg{ background:#FBE9E9; border-radius:8px; padding:8px 12px; border-bottom:none; margin-bottom:4px; }
   .mat-item.mat-item-photo{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
   .mat-item.mat-item-photo .mat-text{ flex:1; min-width:0; }
@@ -551,7 +553,7 @@
     const hasVisual = m.photo || m.photoPending;
     if(m.sub){
       const subHtml = `<span class="mat-label">${m.label}${noteTag}</span>
-        <ul class="mat-sub">${m.sub.map(s => `<li${s.bring ? ' class="bring-sub"' : (s.note ? ' class="note-sub"' : '')}>${s.label}${s.bring ? ' <span class="bring-tag">selbst mitbringen</span>' : ''}${s.note ? ` <span class="note-tag">${s.note}</span>` : ''}</li>`).join('')}</ul>`;
+        <ul class="mat-sub">${m.sub.map(s => { const cls = [s.bring ? 'bring-sub' : (s.note ? 'note-sub' : ''), s.photo ? 'has-photo' : ''].filter(Boolean).join(' '); const txt = `${s.label}${s.bring ? ' <span class="bring-tag">selbst mitbringen</span>' : ''}${s.note ? ` <span class="note-tag">${s.note}</span>` : ''}`; return `<li${cls ? ` class="${cls}"` : ''}>${s.photo ? `<span>${txt}</span><div class="mat-thumb"><img class="zoomable" src="bilder/${s.photo}" alt="${s.label}"></div>` : txt}</li>`; }).join('')}</ul>`;
       if(hasVisual){
         return `<li class="mat-item mat-item-photo${noteClass}"><div class="mat-text">${subHtml}</div>${thumb}</li>`;
       }
@@ -625,6 +627,9 @@
       const numMatch = u.t.match(/^(\d+)\./);
       const unitNum = numMatch ? Number(numMatch[1]) : null;
       u.mat.forEach(m=>{
+        if(m.sub && !m.bring && !m.note){
+          m.sub.forEach(sb=>{ if(sb.gesamt && !sb.bring && !sb.note){ const c = sb.label.replace(/\([^)]*\)/g,'').trim(); if(c) matSet.add(c); } });
+        }
         if(m.bring || m.note) return;
         let label = m.short || m.label;
         const kvMatch = label.match(/\(KV(\d+)\)/i);

@@ -30,8 +30,9 @@ unitsData.PRiGS = {
       {label:'Riech-Quiz', photo:'e3-riech-quiz.jpg', sub:[
         {label:'paarweise gefüllte Gläschen (Lösung mit Farbpunkten auf Boden)'},
       ]},
-      {label:'Geschmacks-Kim', photo:'e3-geschmacks-kim.jpg', sub:[
-        {label:'Augenbinden, Löffel'},
+      {label:'Geschmacks-Kim', sub:[
+        {label:'Augenbinden', photo:'e3-augenbinden.jpg', gesamt:true},
+        {label:'Löffel', photo:'e3-loeffel.jpg', gesamt:true},
         {label:'Küchenmesser', bring:true},
         {label:'verschiedene Lebensmittel (zum Beispiel …)', bring:true},
       ]},
@@ -85,7 +86,7 @@ unitsData.PRiGS = {
     ]},
     {t:'3. Einheit: Was ich schon kann — «Komplimente»', p:54, mat:[
       {label:'Kuvert', photo:'g2-e3-kuvert.jpg'},
-      {label:'Flauschige Stoffstücke', note:'noch nicht vorhanden'},
+      {label:'Flauschige Stoffstücke', photo:'g2-e3-flauschige-stoffstuecke.jpg'},
       {label:'Stärkenbuch der SuS', bring:true},
       {label:'farbiges Papier', bring:true},
       {label:'evtl. Plakat', bring:true},
@@ -110,7 +111,7 @@ unitsData.PRiGS = {
       {label:'Glocke', photo:'g2-e8-glocke.jpg'},
     ]},
     {t:'9. Einheit: Ich und meine Klasse — Die Wandzeitung I', p:66, mat:[
-      {label:'Box', note:'noch nicht vorhanden — evtl. gestrichen'},
+      {label:'Box', photo:'g2-e9-box.jpg'},
       {label:'A7 Kärtchen', bring:true},
       {label:'Rubriken für Wandzeitung', photo:'g2-e9-rubriken-wandzeitung.jpg'},
       {label:'Redestein', photo:'g2-e9-redestein.jpg'},
@@ -118,7 +119,7 @@ unitsData.PRiGS = {
     ]},
     {t:'10. Einheit: Ich und meine Klasse — Die Wandzeitung II', p:67, mat:[
       {label:'Rubriken für Wandzeitung', photo:'g2-e9-rubriken-wandzeitung.jpg'},
-      {label:'Box', note:'noch nicht vorhanden — evtl. gestrichen'},
+      {label:'Box', photo:'g2-e9-box.jpg'},
       {label:'Protokollbogen (KV10)'},
     ]},
   ],
@@ -128,7 +129,7 @@ unitsData.PRiGS = {
       {label:'Plakat & Schreibmaterial', bring:true},
     ]},
     {t:'2. Einheit: Kooperative Spiele — Wir sind eine Gruppe', p:72, mat:[
-      {label:'Augenbinde', note:'noch nicht vorhanden'},
+      {label:'Augenbinde', photo:'g3-augenbinden.jpg'},
       {label:'Bilder Gruppenpuzzle', photo:'g3-e2-bilder-gruppenpuzzle.jpg'},
       {label:'Redestein', photo:'g3-e2-redestein.jpg'},
       {label:'Smiley Karten', photo:'g3-e2-smiley-karten.jpg'},
@@ -148,13 +149,13 @@ unitsData.PRiGS = {
     {t:'6. Einheit: Naturwahrnehmungsübungen', p:78, mat:[
       {label:'Verschiedene Tierkärtchen', photo:'g3-e6-tierkaertchen.jpg'},
       {label:'Hörmemory mit Filmdöschen', photo:'g3-e6-hoermemory.jpg'},
-      {label:'Spiegelfliessen', note:'noch nicht vorhanden'},
-      {label:'Seil', note:'noch nicht vorhanden'},
+      {label:'Spiegelfliessen', photo:'g3-e6-spiegelfliessen.jpg'},
+      {label:'Seil', photo:'p5-e1-schnur.jpg'},
       {label:'Naturmaterial', bring:true},
       {label:'Papier, Stifte & Kleber', bring:true},
     ]},
     {t:'7. Einheit: Nachtwanderung mit Lichterpfad (Abendeinheit A)', p:80, hinweis:'Alternative zur Nachtwanderung könnte ein blind zu begehender Pfad im / um das Schulhaus sein. Zwei Kinder arbeiten zusammen, immer jemand trägt die Augenbinde.', mat:[
-      {label:'Augenbinde', note:'noch nicht vorhanden'},
+      {label:'Augenbinde', photo:'g3-augenbinden.jpg'},
     ]},
     {t:'8. Einheit: Lagerfeuer mit Stockbrot (Abendeinheit B)', p:81, mat:[
       {label:'Schnitzmesser', bring:true},
@@ -178,7 +179,7 @@ unitsData.PRiGS = {
       {label:'2 Handpuppen', note:'noch nicht vorhanden'},
     ]},
     {t:'3. Einheit: Wenn ich mal nicht weiterweiss — Der Moorpfad', p:86, mat:[
-      {label:'Teppichfliessen', note:'noch nicht vorhanden'},
+      {label:'Teppichfliessen', photo:'g4-e3-teppichfliessen.jpg'},
     ]},
     {t:'4. Einheit: Wenn ich mal nicht weiterweiss — Ich erzähl dir was!', p:87, mat:[
       {label:'Papier / Poster & Schreibmaterial', bring:true},
